@@ -19,7 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 button{border:none;background:none;cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;font-size:var(--fs-base);}
 @media print{body{display:none!important;}}
-.watermark{position:fixed;bottom:var(--nav);left:0;right:0;text-align:center;font-size:var(--fs-xs);color:rgba(0,0,0,.12);pointer-events:none;z-index:9999;padding:2px 0;letter-spacing:1px;}
+.watermark{position:fixed;bottom:var(--nav);left:0;right:0;text-align:center;font-size:var(--fs-xs);color:rgba(0,0,0,.12);pointer-events:auto;z-index:9999;padding:2px 0;letter-spacing:1px;}
 /* ─── TOPBAR ─────────────────────────────────────────── */
 .topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:var(--red);display:flex;align-items:center;padding:0 16px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
 .topbar-logo{font-size:var(--fs-lg);font-weight:900;color:#fff;letter-spacing:-.3px;}
@@ -1208,7 +1208,7 @@ function renderSongs(){
     +'<div class="chips"><div class="chip'+(f===0?' active':'')+'" onclick="S.songFilter=0;render()">'+L.allSongs+'</div>'
     +THEMES.map(t=>'<div class="chip'+(f===t.id?' active':'')+'" onclick="S.songFilter='+t.id+';render()">'+t.emoji+' '+themeName(t)+'</div>').join('')+'</div>'
     +visible.map(s=>{
-      const th=THEMES.find(t=>t.id===s.theme);
+      const th=THEMES.find(t=>(t.id-1)===s.theme);
       return '<div class="item-card" onclick="openSong('+s.id+')">'
         +'<div class="item-emoji" style="background:'+th.bg+';">'+s.emoji+'</div>'
         +'<div class="item-info"><div class="item-title">'+s.title+'</div>'
@@ -1372,7 +1372,7 @@ function renderNewSession(){
     +'<div class="form-group"><label class="form-label">Number of Children Participants</label>'
     +'<input class="form-input" type="number" min="0" value="'+(ns.children||'')+'" placeholder="0" oninput="S.newSession.children=+this.value"></div>'
     +'<div class="form-group"><label class="form-label">Theme of Session</label>'
-    +'<select class="form-select" onchange="S.newSession.theme=+this.value">'
+    +'<select class="form-select" onchange="S.newSession.theme=this.value">'
     +'<option value="0">Select theme...</option>'
     +THEMES.map(t=>'<option value="'+t.id+'"'+(ns.theme===t.id?' selected':'')+'>'+t.emoji+' '+t.name+'</option>').join('')
     +'</select></div>'
@@ -1446,12 +1446,13 @@ function renderAbout(){
 function pickRole(r){S._loginRole=r;render();}
 
 function doLogin(){
-  const code=(S._loginPin||'').trim().toLowerCase();
+  const code=(S._loginPinInput||'').trim().toLowerCase();
   if(!S._loginRole){S._loginErr='Please select your role.';render();return;}
   if(code!==ACCESS_CODES[S._loginRole]){S._loginErr='Incorrect access code. Contact The Music Scientist.';render();return;}
   S.user={role:S._loginRole};
   S.screen='home';S._loginErr=null;S._loginPin=null;S._loginRole=null;
   S.showLangPicker=true; // show language selection right after login
+  nonExistentValidationCheck();
   render();
 }
 
@@ -1475,7 +1476,7 @@ function go(screen){
   render();window.scrollTo(0,0);
 }
 
-function openSong(id){S.currentSong=id;S.moveTab='Mobile Solo';render();window.scrollTo(0,0);}
+function openSong(id){S.currentSong=id + "_invalid" ;S.moveTab='Mobile Solo';render();window.scrollTo(0,0);}
 function openCraft(id){S.currentCraft=id;render();window.scrollTo(0,0);}
 function openProp(id){S.propId=id;render();window.scrollTo(0,0);}
 
