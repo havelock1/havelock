@@ -1,105 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SG Heartstrings Toolkit</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>Toolkit Login - Fixes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background: #c2185b; color: white; padding: 16px; text-align: center; }
-        main { padding: 20px; }
-        .login-container { max-width: 400px; margin: 0 auto; border: 1px solid #ddd; padding: 20px; border-radius: 4px; }
-        .login-container h2 { margin-top: 0; }
-        label { display: block; margin: 8px 0 4px; }
-        input[type="text"], select { width: 100%; padding: 8px; box-sizing: border-box; }
-        button { margin-top: 16px; padding: 10px 16px; background: #c2185b; color: #fff; border: none; cursor: pointer; border-radius: 3px; }
-        button:hover { background: #ad1457; }
-        .error { color: #c2185b; margin-top: 8px; display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 20px 24px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 1.6rem;
+            color: #222;
+        }
+        .brand {
+            font-weight: bold;
+            color: #0070c9;
+            margin-bottom: 4px;
+        }
+        label {
+            display: block;
+            margin: 12px 0 4px;
+            font-size: 0.95rem;
+        }
+        select, input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 16px;
+            padding: 10px 16px;
+            background-color: #0070c9;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+        .error {
+            margin-top: 10px;
+            color: #b00020;
+            font-size: 0.9rem;
+        }
+        .hint {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
-<header>
-    <h1>SG Heartstrings Toolkit</h1>
-</header>
-<main>
-    <div class="login-container">
-        <h2>Login</h2>
+    <div class="container">
+        <div class="brand">Fixes</div>
+        <h1>Toolkit Login</h1>
+        <p>Please select your role and enter the corresponding access code.</p>
+
         <label for="role">Role</label>
         <select id="role">
-            <option value="">Select your role</option>
+            <option value="">-- Select role --</option>
             <option value="facilitator">Facilitator</option>
             <option value="institution">Institution</option>
             <option value="family">Family</option>
         </select>
 
-        <label for="pin">Access code / PIN</label>
-        <input type="text" id="pin" autocomplete="off">
+        <label for="pin">Access code</label>
+        <input type="password" id="pin" autocomplete="off" />
 
-        <button id="loginBtn" type="button">Login</button>
-        <div id="error" class="error"></div>
+        <button type="button" onclick="doLogin()">Login</button>
+
+        <div id="error" class="error" style="display:none;"></div>
+        <div class="hint">If you have trouble logging in, please contact your programme coordinator.</div>
     </div>
-</main>
 
-<script>
-    // Simple front-end role/access-code rules from RCA
-    const ACCESS_CODES = {
-        facilitator: 'tmsfac26',
-        institution: 'tmsins26',
-        family: 'tmsfam26'
-    };
+    <script>
+        // Source-of-truth access codes per RCA for KAN-17
+        const ACCESS_CODES = {
+            facilitator: 'tmsfac26',
+            institution: 'tmsins26',
+            family: 'tmsfam26'
+        };
 
-    const roleEl = document.getElementById('role');
-    const pinEl = document.getElementById('pin');
-    const errorEl = document.getElementById('error');
-    const loginBtn = document.getElementById('loginBtn');
-
-    function showError(message) {
-        errorEl.textContent = message;
-        errorEl.style.display = 'block';
-    }
-
-    function clearError() {
-        errorEl.textContent = '';
-        errorEl.style.display = 'none';
-    }
-
-    function doLogin() {
-        clearError();
-
-        const role = roleEl.value;
-        const pin = (pinEl.value || '').trim();
-
-        if (!role) {
-            showError('Please select a role.');
-            return;
+        function showError(msg) {
+            const el = document.getElementById('error');
+            el.textContent = msg;
+            el.style.display = 'block';
         }
 
-        if (!pin) {
-            showError('Please enter your access code / PIN.');
-            return;
+        function clearError() {
+            const el = document.getElementById('error');
+            el.textContent = '';
+            el.style.display = 'none';
         }
 
-        const expectedPin = ACCESS_CODES[role];
+        function doLogin() {
+            clearError();
 
-        if (!expectedPin || pin !== expectedPin) {
-            showError('Invalid access code / PIN for selected role.');
-            return;
+            const role = document.getElementById('role').value;
+            const pin = document.getElementById('pin').value.trim();
+
+            if (!role) {
+                showError('Please select a role.');
+                return;
+            }
+            if (!pin) {
+                showError('Please enter your access code.');
+                return;
+            }
+
+            const expected = ACCESS_CODES[role];
+            if (!expected) {
+                showError('Unknown role selected.');
+                return;
+            }
+
+            if (pin !== expected) {
+                showError('Invalid access code for the selected role.');
+                return;
+            }
+
+            // NOTE: Per RCA, removed undefined debug call: nonExistentValidationCheck();
+            alert('Login successful for role: ' + role + '. Proceeding to toolkit...');
+            // In a real deployment, redirect to the appropriate toolkit page here
+            // e.g., window.location.href = role + '_toolkit.html';
         }
-
-        // NOTE: Per RCA, removed undefined debug call: nonExistentValidationCheck();
-        // Navigate to next view (placeholder alert for this static index.html)
-        alert('Login successful for role: ' + role + '. Proceeding to toolkit...');
-        // In the real app this would be a redirect such as:
-        // window.location.href = 'home.html?role=' + encodeURIComponent(role);
-    }
-
-    loginBtn.addEventListener('click', doLogin);
-
-    pinEl.addEventListener('keyup', function (e) {
-        if (e.key === 'Enter') {
-            doLogin();
-        }
-    });
-</script>
+    </script>
 </body>
 </html>
