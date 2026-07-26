@@ -1,147 +1,1507 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Toolkit Login - Fixes</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .container {
-            max-width: 480px;
-            margin: 40px auto;
-            padding: 20px 24px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin-top: 0;
-            font-size: 1.6rem;
-            color: #222;
-        }
-        .brand {
-            font-weight: bold;
-            color: #0070c9;
-            margin-bottom: 4px;
-        }
-        label {
-            display: block;
-            margin: 12px 0 4px;
-            font-size: 0.95rem;
-        }
-        select, input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-        button {
-            margin-top: 16px;
-            padding: 10px 16px;
-            background-color: #0070c9;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #005fa3;
-        }
-        .error {
-            margin-top: 10px;
-            color: #b00020;
-            font-size: 0.9rem;
-        }
-        .hint {
-            margin-top: 8px;
-            font-size: 0.8rem;
-            color: #666;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>SG Heartstrings Toolkit — The Music Scientist</title>
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --red:#90278e;--orange:#e56da9;--yellow:#ffe599;--green:#06D6A0;
+  --blue:#0096f4;--purple:#c0276a;--pink:#e56da9;
+  --bg:#fdf4fc;--surface:#FFFFFF;--text:#1A1A2E;--text-muted:#6B7280;
+  --border:#e8d0e8;--shadow:0 2px 12px rgba(144,39,142,.08);
+  --fs-xs:11px;--fs-sm:13px;--fs-base:15px;--fs-lg:17px;--fs-xl:20px;--fs-2xl:24px;--fs-3xl:30px;
+  --r:14px;--topbar:56px;--nav:68px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs-base);overflow-x:hidden;user-select:none;-webkit-user-select:none;}
+button{border:none;background:none;cursor:pointer;font-family:inherit;}
+input,select,textarea{font-family:inherit;font-size:var(--fs-base);}
+@media print{body{display:none!important;}}
+.watermark{position:fixed;bottom:var(--nav);left:0;right:0;text-align:center;font-size:var(--fs-xs);color:rgba(0,0,0,.12);pointer-events:auto;z-index:9999;padding:2px 0;letter-spacing:1px;}
+/* ─── TOPBAR ─────────────────────────────────────────── */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:var(--red);display:flex;align-items:center;padding:0 16px;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.topbar-logo{font-size:var(--fs-lg);font-weight:900;color:#fff;letter-spacing:-.3px;}
+.topbar-logo span{color:var(--yellow);}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.em-btn{background:rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:4px 10px;font-size:var(--fs-xs);font-weight:700;border:1px solid rgba(255,255,255,.4);}
+.role-badge{background:rgba(255,255,255,.15);color:#fff;border-radius:12px;padding:3px 9px;font-size:var(--fs-xs);font-weight:600;}
+.logout-btn{color:rgba(255,255,255,.8);font-size:var(--fs-sm);padding:4px 8px;}
+/* ─── BOTTOM NAV ─────────────────────────────────────── */
+.bottomnav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:all .15s;padding:6px 2px;}
+.nav-item.active{color:var(--red);}
+.nav-item:not(.active){color:var(--text-muted);}
+.nav-icon{font-size:22px;line-height:1;}
+.nav-label{font-size:var(--fs-xs);font-weight:600;line-height:1;}
+/* ─── PAGE ───────────────────────────────────────────── */
+.page{padding-top:calc(var(--topbar)+12px);padding-bottom:calc(var(--nav)+12px);min-height:100vh;}
+.inner{max-width:480px;margin:0 auto;padding:0 14px;}
+/* ─── CARDS ──────────────────────────────────────────── */
+.card{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:12px;}
+.section-title{font-size:var(--fs-xl);font-weight:800;color:var(--text);margin-bottom:14px;}
+.section-sub{font-size:var(--fs-sm);color:var(--text-muted);margin-bottom:16px;line-height:1.5;}
+/* ─── HOME TILES ─────────────────────────────────────── */
+.home-hero{background:linear-gradient(135deg,var(--red),#5d1260);border-radius:var(--r);padding:20px;margin-bottom:14px;color:#fff;text-align:center;}
+.home-hero h1{font-size:var(--fs-2xl);font-weight:900;line-height:1.2;}
+.home-hero p{font-size:var(--fs-sm);margin-top:6px;opacity:.9;line-height:1.5;}
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.home-tile{background:#fff;border-radius:16px;padding:22px 14px 18px;text-align:center;cursor:pointer;border:2px solid transparent;box-shadow:var(--shadow);transition:all .18s;position:relative;overflow:hidden;}
+.home-tile:active{transform:scale(.97);}
+.home-tile.t-props{border-color:var(--orange);background:linear-gradient(135deg,#fce8f1,#FFF);}
+.home-tile.t-oldies{border-color:var(--purple);background:linear-gradient(135deg,#f5d0f5,#FFF);}
+.home-tile.t-songs{border-color:var(--red);background:linear-gradient(135deg,#ede0ff,#FFF);}
+.home-tile.t-crafts{border-color:var(--blue);background:linear-gradient(135deg,#e3f3ff,#FFF);}
+.tile-icon{font-size:46px;display:block;margin-bottom:10px;line-height:1;}
+.tile-title{font-size:var(--fs-base);font-weight:800;color:var(--text);line-height:1.2;}
+.tile-sub{font-size:var(--fs-xs);color:var(--text-muted);margin-top:5px;line-height:1.4;}
+.home-quick{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.quick-btn{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:7px 14px;font-size:var(--fs-sm);font-weight:600;color:var(--text);cursor:pointer;transition:all .15s;}
+.quick-btn:active{background:var(--bg);}
+/* ─── FILTER CHIPS ───────────────────────────────────── */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:var(--fs-sm);font-weight:600;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.chip.active{background:var(--red);border-color:var(--red);color:#fff;}
+/* ─── LIST CARDS ─────────────────────────────────────── */
+.item-card{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .15s;}
+.item-card:active{transform:scale(.98);}
+.item-emoji{font-size:36px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:12px;flex-shrink:0;}
+.item-info{flex:1;min-width:0;}
+.item-title{font-size:var(--fs-base);font-weight:700;line-height:1.2;}
+.item-sub{font-size:var(--fs-sm);color:var(--text-muted);margin-top:3px;line-height:1.4;}
+.item-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.tag{font-size:var(--fs-xs);padding:2px 8px;border-radius:10px;font-weight:600;}
+.tag-theme1{background:#fce8f1;color:#c0276a;}
+.tag-theme2{background:#e3f3ff;color:#0096f4;}
+.tag-theme3{background:#ede0ff;color:#90278e;}
+.tag-theme4{background:#E8FFF4;color:#008050;}
+.tag-move{background:#fce8f1;color:#90278e;}
+.tag-lang{background:#F0F0F0;color:#404040;}
+.tag-diff-easy{background:#E8FFF0;color:#008040;}
+.tag-diff-medium{background:#FFF8E0;color:#806000;}
+.tag-diff-hard{background:#FFE8E8;color:#A00000;}
+.arrow{color:var(--text-muted);font-size:18px;flex-shrink:0;}
+/* ─── DETAIL ─────────────────────────────────────────── */
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--red);font-weight:700;font-size:var(--fs-base);margin-bottom:16px;cursor:pointer;}
+.detail-hero{background:linear-gradient(135deg,var(--red),#5d1260);border-radius:var(--r);padding:20px;margin-bottom:14px;color:#fff;text-align:center;}
+.detail-hero .big-emoji{font-size:64px;display:block;margin-bottom:10px;}
+.detail-hero h2{font-size:var(--fs-2xl);font-weight:900;line-height:1.2;}
+.detail-hero p{font-size:var(--fs-sm);margin-top:6px;opacity:.9;line-height:1.5;}
+.detail-section{margin-bottom:14px;}
+.detail-section h3{font-size:var(--fs-lg);font-weight:800;margin-bottom:10px;color:var(--text);}
+.step-list{display:flex;flex-direction:column;gap:10px;}
+.step{display:flex;gap:10px;align-items:flex-start;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--red);color:#fff;font-weight:700;font-size:var(--fs-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-text{font-size:var(--fs-sm);color:var(--text);line-height:1.5;flex:1;}
+.mat-list{display:flex;flex-wrap:wrap;gap:6px;}
+.mat-tag{background:#F3F4F6;border-radius:8px;padding:5px 10px;font-size:var(--fs-sm);color:var(--text);}
+.highlight-box{border-radius:12px;padding:14px;margin-bottom:10px;}
+.highlight-box.green{background:#E8FFF4;border-left:4px solid var(--green);}
+.highlight-box.orange{background:#FFF8E8;border-left:4px solid var(--orange);}
+.highlight-box.purple{background:#F3EEFF;border-left:4px solid var(--purple);}
+.highlight-box.blue{background:#E8F4FD;border-left:4px solid var(--blue);}
+.highlight-box.red{background:#FFF0F2;border-left:4px solid var(--red);}
+.highlight-title{font-size:var(--fs-sm);font-weight:700;margin-bottom:4px;}
+.highlight-text{font-size:var(--fs-sm);color:var(--text);line-height:1.5;}
+/* ─── MOVEMENT TABS ──────────────────────────────────── */
+.move-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.move-tab{padding:10px;border-radius:10px;border:2px solid var(--border);background:#fff;text-align:center;cursor:pointer;transition:all .15s;}
+.move-tab.active{border-color:var(--purple);background:#F3EEFF;}
+.move-tab-icon{font-size:24px;display:block;margin-bottom:4px;}
+.move-tab-label{font-size:var(--fs-xs);font-weight:700;color:var(--text);line-height:1.3;}
+/* ─── VIDEO PLAYER ───────────────────────────────────── */
+.video-wrap{border-radius:12px;overflow:hidden;background:#000;margin-bottom:14px;position:relative;padding-top:56.25%;}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+.video-placeholder{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1A1A2E,#2D2D4E);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
+.vp-icon{font-size:48px;margin-bottom:12px;}
+.vp-title{color:#fff;font-size:var(--fs-base);font-weight:700;margin-bottom:6px;}
+.vp-sub{color:rgba(255,255,255,.6);font-size:var(--fs-sm);line-height:1.4;}
+.vp-badge{margin-top:12px;background:var(--yellow);color:#000;border-radius:20px;padding:5px 14px;font-size:var(--fs-xs);font-weight:700;}
+/* ─── OLDIES ─────────────────────────────────────────── */
+.oldies-tabs{display:flex;gap:0;margin-bottom:14px;border-radius:10px;overflow:hidden;border:1.5px solid var(--border);}
+.oldies-tab{flex:1;padding:10px;text-align:center;font-size:var(--fs-sm);font-weight:700;cursor:pointer;background:#fff;color:var(--text-muted);transition:all .15s;}
+.oldies-tab.active{background:var(--purple);color:#fff;}
+.oldie-card{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;}
+.oldie-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.oldie-emoji{font-size:30px;}
+.oldie-title{font-size:var(--fs-base);font-weight:700;line-height:1.2;}
+.oldie-artist{font-size:var(--fs-sm);color:var(--text-muted);margin-top:2px;}
+.oldie-note{font-size:var(--fs-sm);color:var(--text);line-height:1.4;margin-bottom:10px;background:#F8F4F0;border-radius:8px;padding:8px 10px;}
+.oldie-btns{display:flex;gap:8px;}
+.stream-btn{flex:1;padding:8px;border-radius:8px;font-size:var(--fs-sm);font-weight:700;text-align:center;cursor:pointer;text-decoration:none;display:block;}
+.stream-btn.spotify{background:#1DB954;color:#fff;}
+.stream-btn.yt{background:#FF0000;color:#fff;}
+/* ─── FORMS ──────────────────────────────────────────── */
+.form-group{margin-bottom:14px;}
+.form-label{font-size:var(--fs-sm);font-weight:700;margin-bottom:6px;display:block;color:var(--text);}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:var(--fs-base);color:var(--text);background:#fff;outline:none;}
+.form-input:focus{border-color:var(--red);}
+.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:var(--fs-base);color:var(--text);background:#fff;outline:none;appearance:none;}
+.scale-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.scale-btn{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:var(--fs-sm);font-weight:700;cursor:pointer;transition:all .15s;}
+.scale-btn.active{background:var(--red);border-color:var(--red);color:#fff;}
+.submit-btn{width:100%;padding:14px;background:var(--red);color:#fff;border-radius:12px;font-size:var(--fs-lg);font-weight:800;cursor:pointer;transition:all .15s;border:none;margin-top:6px;}
+.submit-btn:active{transform:scale(.98);opacity:.9;}
+.submit-btn:disabled{background:#ccc;cursor:default;}
+/* ─── SESSION CARDS ──────────────────────────────────── */
+.session-card{background:#fff;border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;}
+.session-venue{font-size:var(--fs-base);font-weight:700;}
+.session-date{font-size:var(--fs-sm);color:var(--text-muted);}
+.session-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.stat-pill{background:#F3F4F6;border-radius:8px;padding:4px 10px;font-size:var(--fs-xs);font-weight:600;}
+/* ─── LOGIN ──────────────────────────────────────────── */
+.login-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#FFF0F0 0%,var(--bg) 100%);}
+.login-logo{font-size:var(--fs-3xl);font-weight:900;color:var(--red);margin-bottom:4px;text-align:center;}
+.login-logo span{color:var(--orange);}
+.login-sub{font-size:var(--fs-sm);color:var(--text-muted);margin-bottom:30px;text-align:center;line-height:1.5;}
+.login-card{background:#fff;border-radius:20px;padding:24px;box-shadow:0 4px 24px rgba(0,0,0,.1);width:100%;max-width:360px;}
+.role-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;}
+.role-btn{border:2px solid var(--border);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:all .15s;background:#fff;}
+.role-btn.selected{border-color:var(--red);background:#FFF0F2;}
+.role-btn .r-icon{font-size:28px;display:block;margin-bottom:6px;}
+.role-btn .r-label{font-size:var(--fs-xs);font-weight:700;color:var(--text);}
+.pin-row{display:flex;gap:8px;margin-bottom:16px;}
+.pin-input{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;font-size:var(--fs-lg);text-align:center;letter-spacing:4px;outline:none;}
+.pin-input:focus{border-color:var(--red);}
+.login-btn{width:100%;padding:14px;background:var(--red);color:#fff;border-radius:12px;font-size:var(--fs-lg);font-weight:800;cursor:pointer;border:none;}
+.login-err{color:var(--red);font-size:var(--fs-sm);text-align:center;margin-top:8px;}
+/* ─── EMPTY / RESULT ─────────────────────────────────── */
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);}
+.empty-icon{font-size:48px;display:block;margin-bottom:12px;}
+.result-wrap{text-align:center;padding:30px 0;}
+.result-icon{font-size:64px;display:block;margin-bottom:16px;}
+.result-title{font-size:var(--fs-2xl);font-weight:900;margin-bottom:8px;}
+.result-text{font-size:var(--fs-sm);color:var(--text-muted);line-height:1.5;margin-bottom:24px;}
+.res-card{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:10px;}
+.res-title{font-size:var(--fs-base);font-weight:700;margin-bottom:6px;}
+.res-text{font-size:var(--fs-sm);color:var(--text-muted);line-height:1.5;}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="brand">Fixes</div>
-        <h1>Toolkit Login</h1>
-        <p>Please select your role and enter the corresponding access code.</p>
+<div id="app"></div>
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════
+//  STATIC DATA
+// ═══════════════════════════════════════════════════════
+const THEMES=[
+  {id:1,name:'Food I Love',emoji:'🍜',color:'#c0276a',bg:'#fce8f1',tagClass:'tag-theme1'},
+  {id:2,name:'Places I Love',emoji:'🏡',color:'#0096f4',bg:'#e3f3ff',tagClass:'tag-theme2'},
+  {id:3,name:'Games & Sports',emoji:'⚽',color:'#90278e',bg:'#ede0ff',tagClass:'tag-theme3'},
+  {id:4,name:'We Can One Lah!',emoji:'🤝',color:'#008050',bg:'#E8FFF4',tagClass:'tag-theme4'}
+];
 
-        <label for="role">Role</label>
-        <select id="role">
-            <option value="">-- Select role --</option>
-            <option value="facilitator">Facilitator</option>
-            <option value="institution">Institution</option>
-            <option value="family">Family</option>
-        </select>
+const SONGS=[
+  {id:1,theme:1,emoji:'🍚',title:'Chicken Rice',sub:'Hainanese Treasure, Singapore Soul Food',langs:['Hokkien','Mandarin'],dur:'3:15',bpm:90,hasMovement:true,vimeoId:null,
+   about:'A playful multilingual ode to the dish that unites all Singaporeans — Hainanese Chicken Rice. Grandparents share memories of the hawker stalls they grew up visiting.',
+   discussionPrompts:['Which stall has the best chicken rice in your neighbourhood?','Grandparent: how did you make chicken rice from scratch?','What is the secret ingredient that makes it taste like home?'],
+   movements:{
+     'Mobile Solo':{desc:'Standing or seated with room to sway. March in place during verses, sway arms like stirring a big pot during chorus.',cues:['Verse: knee lifts alternating','Chorus: big arm stir circles','Bridge: tap thighs in rhythm']},
+     'Mobile+Partner':{desc:'Face partner. Mirror each other\'s pot-stirring motion. Pass an imaginary rice bowl during chorus.',cues:['Verse: mirror knee lifts','Chorus: pass the bowl side to side','Bridge: high-5 on beat 1']},
+     'Immobile Solo':{desc:'Seated, no standing. All movement from shoulders up and hands.',cues:['Verse: finger drum on lap','Chorus: hands circle like stirring','Bridge: clap soft-soft-loud pattern']},
+     'Immobile+Partner':{desc:'Two seated together. Partner places hand on elder\'s hand to guide the stirring motion gently.',cues:['Verse: hold hands and sway together','Chorus: guided stirring together','Bridge: squeeze hands on beat']}
+   }},
+  {id:2,theme:1,emoji:'🥗',title:'Less Lah! Less Lah!',sub:'3-Generation Healthy Eating Comedy',langs:['English','Singlish'],dur:'3:00',bpm:110,hasMovement:false,vimeoId:null,
+   about:'A funny call-and-response song where grandchildren beg grandparents to eat less sugar, less salt — while grandparents insist the old way is the best way!',
+   discussionPrompts:['What food do you find hard to give up?','Grandparent: what did you eat growing up that kids today don\'t eat?','How do we balance enjoying food and staying healthy?'],
+   movements:null},
+  {id:3,theme:1,emoji:'🍌',title:'Yummy Banana Leaf Rice',sub:'Tamil-English Celebration',langs:['Tamil','English'],dur:'3:20',bpm:100,hasMovement:false,vimeoId:null,
+   about:'A vibrant Tamil-English song celebrating the communal joy of eating on a banana leaf — rice, curries, papadom — and eating with your hands!',
+   discussionPrompts:['Have you eaten banana leaf rice before? Where?','What food from another culture have you learned to love?','Grandparent: what traditional food do you want grandchildren to know?'],
+   movements:null},
+  {id:4,theme:2,emoji:'🏡',title:'I Love My Kampong',sub:'A Home That Lives in Memory',langs:['English','Malay'],dur:'3:45',bpm:85,hasMovement:true,vimeoId:null,
+   about:'A tender English-Malay ballad where elderly sing of the kampong they grew up in — the neighbour who shared food, the mango tree, the wooden floor. Bridges generations through place memory.',
+   discussionPrompts:['Grandparent: describe your childhood home.','What is one thing about old Singapore you wish still existed?','Children: what place feels most like home to you?'],
+   movements:{
+     'Mobile Solo':{desc:'Walk slowly in a circle — as if returning to the kampong. Gentle sway during chorus.',cues:['Verse: slow walk in circle, look around','Chorus: hands over heart, sway','Bridge: point to the sky (mango tree)']},
+     'Mobile+Partner':{desc:'Elder walks with grandchild hand in hand, as if taking them home.',cues:['Verse: walk together slowly','Chorus: stop and face each other, hands on heart','Bridge: both point upward together']},
+     'Immobile Solo':{desc:'All seated. Eyes can close during verse to visualise the kampong.',cues:['Verse: eyes closed, gentle head sway','Chorus: hands over heart','Bridge: hands up, wiggle fingers like leaves']},
+     'Immobile+Partner':{desc:'Grandchild sits beside elder, holds hand during whole song.',cues:['Verse: squeeze hand gently on beat','Chorus: hands together over heart','Bridge: trace upward together']}
+   }},
+  {id:5,theme:2,emoji:'🛒',title:'The Wet Market',sub:'Call & Response of the Vendors',langs:['Hokkien','Singlish'],dur:'3:10',bpm:120,hasMovement:false,vimeoId:null,
+   about:'A lively Hokkien-Singlish song mimicking the calls of wet market vendors — fishmonger, vegetable auntie, tofu man. Grandparents can teach grandchildren the old vendor cries.',
+   discussionPrompts:['What vendor cries do you remember from childhood?','Do you still go to the wet market? What do you buy?','Wet market vs supermarket — what\'s different?'],
+   movements:null},
+  {id:6,theme:2,emoji:'🌙',title:'夜里的世界',sub:'The World at Night — Cantonese Lullaby',langs:['Cantonese','English'],dur:'3:50',bpm:75,hasMovement:false,vimeoId:null,
+   about:'A gentle Cantonese-English lullaby about the quiet world after dark — the longkang, the coconut tree, the sound of crickets. A song to sing at bedtime across generations.',
+   discussionPrompts:['What sounds did you hear at night growing up?','Grandparent: what lullaby did your mother sing to you?','Children: what do you see from your window at night?'],
+   movements:null},
+  {id:7,theme:3,emoji:'🦵',title:'Sepak Takraw',sub:'Gravity-Defying Bicycle Kick',langs:['Malay','English'],dur:'3:15',bpm:130,hasMovement:true,vimeoId:null,
+   about:'A high-energy Malay-English song celebrating the acrobatic traditional sport of Sepak Takraw. Grandparents who played in kampong days can share memories of barefoot games.',
+   discussionPrompts:['Grandparent: did you play Sepak Takraw? Where?','What other traditional Malay games do you remember?','Children: which sport do you love most?'],
+   movements:{
+     'Mobile Solo':{desc:'Standing. Energetic side kicks alternating left and right. Raise arms like the rattan ball flying over the net.',cues:['Verse: side kicks alternating (hold chair if needed)','Chorus: arms arc high like the ball','Bridge: jump (or chair bounce) on beat']},
+     'Mobile+Partner':{desc:'Partners face each other. Kick toward each other\'s space (not touching). Celebrate together each chorus.',cues:['Verse: mirror kicks','Chorus: arms arc simultaneously','Bridge: chest bump or high-5']},
+     'Immobile Solo':{desc:'Seated leg kicks forward, alternating. Arms make arc motion during chorus.',cues:['Verse: leg kicks seated','Chorus: arms sweep upward','Bridge: fists pump upward']},
+     'Immobile+Partner':{desc:'Grandchild sits at elder\'s feet. Grandchild does kicks; elder does arm arcs.',cues:['Verse: elder claps, child kicks','Chorus: both arms arc together','Bridge: child cheers, elder fist pumps']}
+   }},
+  {id:8,theme:3,emoji:'🪶',title:'Capteh King',sub:'The Art of the Shuttlecock',langs:['Hokkien','Mandarin'],dur:'3:00',bpm:115,hasMovement:false,vimeoId:null,
+   about:'A bouncy Hokkien-Mandarin song about the simple joy of keeping a feathered shuttlecock in the air. How many kicks without dropping?',
+   discussionPrompts:['Grandparent: how many kicks could you do in a row?','What did you do after school when you were young?','Which old game should children today try?'],
+   movements:null},
+  {id:9,theme:3,emoji:'🥋',title:'Bruce Lee',sub:'Martial Arts Legend',langs:['Chinese','English'],dur:'3:30',bpm:125,hasMovement:false,vimeoId:null,
+   about:'A Chinese-English tribute to Bruce Lee — kung fu film legend, icon of Asian pride. Grandparents who watched his films in the cinema share that magic with grandchildren.',
+   discussionPrompts:['Grandparent: did you watch Bruce Lee films at the cinema?','What did Bruce Lee mean to your generation?','Children: who is your superhero?'],
+   movements:null},
+  {id:10,theme:4,emoji:'🤝',title:'Together We Can Lah!',sub:'Gotong Royong as Mental Wellbeing',langs:['Malay','English','Singlish'],dur:'3:50',bpm:95,hasMovement:true,vimeoId:null,
+   about:'The anthem of SG Heartstrings. A trilingual celebration of gotong royong — helping one another. Designed to be sung together by all three generations simultaneously.',
+   discussionPrompts:['When did someone help you when you really needed it?','Gotong royong means helping without being asked — when did you do this?','What does "we can one lah!" mean to you?'],
+   movements:{
+     'Mobile Solo':{desc:'March in place, then reach arms out to sides (embracing the community) during chorus.',cues:['Verse: march in place, look around','Chorus: arms open wide, smile','Bridge: both fists up — "We can!"']},
+     'Mobile+Partner':{desc:'Link arms or hold hands. Walk in circle together. Open arms to include more people.',cues:['Verse: walk in circle linked','Chorus: face outward, arms open','Bridge: everyone fists-up together']},
+     'Immobile Solo':{desc:'Seated sway, arms sway side to side. Big arm opens during chorus.',cues:['Verse: side-to-side arm sway','Chorus: both arms open wide','Bridge: fists pump to sky']},
+     'Immobile+Partner':{desc:'All linked hands seated. Sway together as one connected group.',cues:['Verse: sway holding hands','Chorus: swing arms outward','Bridge: squeeze hands and cheer']}
+   }},
+  {id:11,theme:4,emoji:'🌬️',title:'Breathe Just Breathe',sub:'Emotional Regulation Through Music',langs:['English','Mandarin'],dur:'3:20',bpm:70,hasMovement:false,vimeoId:null,
+   about:'A calming English-Mandarin song about pausing, breathing, and choosing peace. Helps elderly and children process emotions through slow, deliberate breathing with music.',
+   discussionPrompts:['What do you do when you feel overwhelmed?','Grandparent: how did you calm yourself in hard times?','Let\'s breathe together: in for 4 counts, out for 4.'],
+   movements:null},
+  {id:12,theme:4,emoji:'🌧️',title:'Walk to School Rain or Shine',sub:'Discipline, Showing Up, Resilience',langs:['Hokkien','English','Singlish'],dur:'3:10',bpm:100,hasMovement:false,vimeoId:null,
+   about:'A Hokkien-English-Singlish song about the value of showing up — the walk to school in the rain, the discipline of grandparents who never had excuses.',
+   discussionPrompts:['Grandparent: how far did you walk to school? In what conditions?','What lesson from your childhood do you want grandchildren to carry?','Rain or shine — what does showing up mean to you?'],
+   movements:null}
+];
 
-        <label for="pin">Access code</label>
-        <input type="password" id="pin" autocomplete="off" />
+const PROPS=[
+  {id:'p1',emoji:'🍚',title:'Rice Shaker',sub:'Maracas-style from pantry staples',diff:'Easy',time:15,
+   materials:['Plastic bottle (e.g. mineral water)','Dry rice or lentils','Tape or rubber band','Stickers or washi tape to decorate'],
+   steps:['Pour about ¼ cup of dry rice into the bottle.','Close the cap tightly. Tape around the cap to seal.','Shake to test the sound — add more rice for a louder shake.','Decorate with stickers, washi tape, or drawn patterns.'],
+   elderlyRole:'Grandparent fills the bottle and seals it. Let them feel the weight and decide how much rice.',
+   wisdomPrompt:'Grandparent, did you ever make your own toys or instruments growing up?',
+   elderlyAdaptation:'Use a larger bottle that is easier to grip. Pre-cut tape strips for easy application.',
+   playWith:['Chicken Rice','Less Lah! Less Lah!','The Wet Market']},
+  {id:'p2',emoji:'🥫',title:'Tin Can Drum',sub:'Turn recycled tins into resonant drums',diff:'Easy',time:20,
+   materials:['Empty tin can (washed, no sharp edges)','Balloon or stretch fabric','Rubber band','Two pencils or chopsticks (drumsticks)','Felt or foam to wrap rim (safety)'],
+   steps:['Smooth any sharp edges with tape or foam padding around the rim.','Cut the balloon and stretch it over the open top of the can.','Secure tightly with a rubber band.','Use pencils or chopsticks as drumsticks. Decorate the outside.'],
+   elderlyRole:'Grandparent advises on the right tightness of the balloon membrane — they know the feel of a good drum!',
+   wisdomPrompt:'Did you have drums or percussion instruments at celebrations when you were young?',
+   elderlyAdaptation:'Pre-stretch the balloon for elderly with limited hand strength. Use foam drumsticks for softer impact.',
+   playWith:['Sepak Takraw','Together We Can Lah!','Bruce Lee']},
+  {id:'p3',emoji:'🎵',title:'Paper Plate Tambourine',sub:'Jingle bells and rhythm in one',diff:'Easy',time:20,
+   materials:['2 paper plates','Small jingle bells','Hole punch','Yarn or ribbon','Markers and stickers'],
+   steps:['Decorate both plates with markers and stickers.','Hold plates face to face. Punch holes around the rim every 5cm.','Thread yarn through each hole and attach a jingle bell.','Tie off securely. Shake or tap to play!'],
+   elderlyRole:'Grandparent threads yarn through holes — good fine motor exercise. They also choose the decoration design.',
+   wisdomPrompt:'Have you played the tambourine before? At a choir? A school performance?',
+   elderlyAdaptation:'Use pre-punched holes. Enlarge holes for easier threading. Use thick yarn.',
+   playWith:['Yummy Banana Leaf Rice','I Love My Kampong','Breathe Just Breathe']},
+  {id:'p4',emoji:'🥢',title:'Rhythm Sticks / Claves',sub:'Classic classroom percussion',diff:'Easy',time:10,
+   materials:['Two wooden dowels (30cm, 1.5cm diameter)','Sandpaper (to smooth ends)','Paint or rubber bands to grip'],
+   steps:['Sand both ends of each dowel until smooth — no splinters.','Paint or wrap with rubber bands for grip and colour.','Hold one stick horizontal on the palm of one hand, tap with the other.','Practise: ♩♩♩♩ then ♩♩♪♩♪'],
+   elderlyRole:'Grandparent demonstrates the clave or any old rhythm they remember. They are the teacher here.',
+   wisdomPrompt:'What songs did you clap along to at school assemblies or community events?',
+   elderlyAdaptation:'Use lighter, thinner dowels. Wrap in non-slip grip tape for arthritic hands.',
+   playWith:['Together We Can Lah!','Walk to School Rain or Shine','Capteh King']},
+  {id:'p5',emoji:'🎸',title:'Rubber Band Guitar',sub:'Explore pitch and tension through strings',diff:'Medium',time:25,
+   materials:['Shoebox or tissue box','Assorted rubber bands (different thicknesses)','Pencil or chopstick (bridge)','Scissors'],
+   steps:['Remove the lid from the box (or cut a large oval hole in the lid).','Stretch rubber bands lengthwise across the box over the hole.','Slide a pencil under the bands near one end to raise them (bridge).','Pluck bands — thicker = lower pitch, thinner = higher pitch!'],
+   elderlyRole:'Grandparent chooses which rubber band goes where — pitch sorting! Decorate the body like a real guitar.',
+   wisdomPrompt:'Did you ever play a stringed instrument — guitar, erhu, sitar? What songs did you play?',
+   elderlyAdaptation:'Pre-stretch rubber bands over the box. Grandparent can pluck with a pencil tip instead of fingertip.',
+   playWith:['夜里的世界','I Love My Kampong','Breathe Just Breathe']},
+  {id:'p6',emoji:'🌧️',title:'Rainstick',sub:'Bring the sound of rain indoors',diff:'Medium',time:30,
+   materials:['Paper towel roll or wrapping paper tube','Tinfoil (long strip)','Dry rice or small beads','Tape','Paper to seal ends','Paints or washi tape'],
+   steps:['Crumple a long strip of tinfoil into a spiral and push it into the tube.','Seal one end with tape and thick paper.','Pour in a small amount of rice or beads.','Seal the other end. Decorate with paint or washi tape.','Tip slowly end to end to hear the rain!'],
+   elderlyRole:'Grandparent seals the ends and is the first to tip it — their patience creates the best rain sound.',
+   wisdomPrompt:'Grandparent: what do you remember about monsoon rain when you were young?',
+   elderlyAdaptation:'Use a shorter, wider tube for easier handling. Pre-coil the tinfoil for the elder to insert.',
+   playWith:['Walk to School Rain or Shine','夜里的世界','Breathe Just Breathe']}
+];
 
-        <button type="button" onclick="doLogin()">Login</button>
+const OLDIES={
+  sg:[
+    {emoji:'🎙️',title:'爱拼才会赢',artist:'Ye Qi Tian',lang:'Hokkien',note:'The great Hokkien anthem of resilience — "work hard and you will win." Every Singapore elder knows this by heart.',ytQ:'愛拼才會贏 葉啟田',spotifyQ:'爱拼才会赢 叶启田'},
+    {emoji:'🌹',title:'月亮代表我的心',artist:'Teresa Teng',lang:'Mandarin',note:'Teresa Teng\'s timeless classic. Ask grandparents: where were you when you first heard this song?',ytQ:'月亮代表我的心 Teresa Teng',spotifyQ:'月亮代表我的心 邓丽君'},
+    {emoji:'🌺',title:'Rasa Sayang',artist:'Traditional Malay',lang:'Malay',note:'A Malay folk song known across Southeast Asia. Clap the rhythm together — grandparents will remember the hand movements.',ytQ:'Rasa Sayang folk song',spotifyQ:'Rasa Sayang traditional'},
+    {emoji:'🎵',title:'Di Tanjung Katong',artist:'Traditional',lang:'Malay',note:'A classic about Tanjong Katong. Elderly who lived nearby will have many stories.',ytQ:'Di Tanjung Katong Malay song',spotifyQ:'Di Tanjung Katong traditional'},
+    {emoji:'🎶',title:'Chan Mali Chan',artist:'Traditional',lang:'Malay/Peranakan',note:'A beloved Peranakan folk song. Ask grandparents about Peranakan traditions, food, and dress.',ytQ:'Chan Mali Chan Singapore',spotifyQ:'Chan Mali Chan traditional'},
+    {emoji:'🌙',title:'Bengawan Solo',artist:'Gesang',lang:'Indonesian/Malay',note:'The most famous Malay ballad ever written — beloved in Singapore for decades. Bring out the handkerchiefs!',ytQ:'Bengawan Solo original',spotifyQ:'Bengawan Solo Gesang'},
+    {emoji:'🎤',title:'那些年',artist:'Hu Xia',lang:'Mandarin',note:'A nostalgic song about childhood friends and golden memories. Works beautifully for intergenerational reminiscing.',ytQ:'那些年 胡夏',spotifyQ:'那些年 胡夏'},
+    {emoji:'🎸',title:'We Are Singapore',artist:'Various Artists',lang:'English',note:'The National Day anthem. Sing together and let grandparents share what Singapore was like in their day.',ytQ:'We Are Singapore NDP',spotifyQ:'We Are Singapore National Day'}
+  ],
+  nursery:[
+    {emoji:'⭐',title:'Twinkle Twinkle Little Star',artist:'Traditional English',lang:'English',note:'Point to the sky together. Grandparents in many cultures know a version of this in their mother tongue.',ytQ:'Twinkle Twinkle Little Star nursery rhyme',spotifyQ:'Twinkle Twinkle Little Star'},
+    {emoji:'🚌',title:'Wheels on the Bus',artist:'Traditional English',lang:'English',note:'Do the actions together! Grandparents make great "bus drivers" showing all the hand movements.',ytQ:'Wheels on the Bus kids song',spotifyQ:'Wheels on the Bus'},
+    {emoji:'🐟',title:'两只老虎',artist:'Traditional Chinese',lang:'Mandarin',note:'The Chinese equivalent of Frère Jacques. Even grandparents who have forgotten many songs remember this one.',ytQ:'两只老虎 儿歌',spotifyQ:'两只老虎 儿歌'},
+    {emoji:'🦆',title:'Five Little Ducks',artist:'Traditional English',lang:'English',note:'Count down together. Grandparents can use fingers for counting — gentle fine motor activity.',ytQ:'Five Little Ducks song',spotifyQ:'Five Little Ducks nursery rhyme'},
+    {emoji:'🌧️',title:'Rain Rain Go Away',artist:'Traditional English',lang:'English',note:'Connect to monsoon season memories. Ask grandparents: did you play in the rain as a child?',ytQ:'Rain Rain Go Away kids song',spotifyQ:'Rain Rain Go Away nursery rhyme'},
+    {emoji:'🙏',title:'Bangun Tidur',artist:'Traditional Malay',lang:'Malay',note:'A Malay morning song about waking up and washing — beautiful for starting a session together.',ytQ:'Bangun Tidur lagu kanak-kanak Melayu',spotifyQ:'Bangun Tidur lagu kanak'},
+    {emoji:'🐛',title:'Incy Wincy Spider',artist:'Traditional English',lang:'English',note:'Finger play! Grandparents and children do the spider climbing motion together — great for fine motor bonding.',ytQ:'Incy Wincy Spider kids',spotifyQ:'Incy Wincy Spider nursery rhyme'},
+    {emoji:'🌟',title:'If You\'re Happy and You Know It',artist:'Traditional English',lang:'English',note:'Clap, stomp, shout hooray! High energy starter that works at any age, even for immobile elderly who can clap.',ytQ:'If You Happy and You Know It nursery rhyme',spotifyQ:'If You Happy and You Know It'}
+  ]
+};
 
-        <div id="error" class="error" style="display:none;"></div>
-        <div class="hint">If you have trouble logging in, please contact your programme coordinator.</div>
-    </div>
+const CRAFTS=[
+  {id:101,theme:1,title:'Kopitiam Placemat',sub:'Wax Resist & Watercolour',time:30,diff:'Easy',emoji:'☕',ytDemoId:null,who:'All ages — elderly seated, children beside',
+   materials:['White cardstock A3','White crayon or wax candle','Watercolour paints','Brush','Newspaper','Laminator pouch (optional)'],
+   steps:['Draw kopitiam scenes in white crayon on cardstock: kaya toast, eggs, cups. Press hard!','Mix watery watercolour paint (1:3 paint-to-water).','Brush paint washes over the entire paper — the crayon resists and magically appears.','Let dry. Add more layers of colour.','Laminate to create a usable placemat.'],
+   connectionMoment:'Ask grandparent: What did you always order at the kopitiam? What was your "usual"?',
+   facilitatorTip:'Pre-draw the wax design for elderly with limited vision — they can still paint and experience the magic reveal.',
+   elderlyAdaptation:'Use thick brushes. Keep palette to 2-3 colours. Seated throughout.'},
+  {id:102,theme:1,title:'Hawker Stall Diorama',sub:'Mixed Media Craft',time:45,diff:'Medium',emoji:'🍜',ytDemoId:null,who:'Children build; elderly guide and narrate',
+   materials:['Shoebox (base structure)','Coloured card / tissue paper','Craft sticks','Glue','Scissors','Markers','Fabric scraps for awning'],
+   steps:['Turn shoebox on its side — this is your hawker stall.','Cut a fabric or card awning and glue to the top.','Make a counter from card and craft sticks.','Create tiny "food" from clay or scrunched tissue paper.','Write the stall name — grandparent suggests their favourite real stall.'],
+   connectionMoment:'Grandparent names the stall after a real hawker they remember. Children ask: "What did the uncle/auntie look like?"',
+   facilitatorTip:'Have photos of old Singapore hawker centres ready to inspire discussion and visual reference.',
+   elderlyAdaptation:'Grandparent focuses on decoration and narration — children handle cutting and construction.'},
+  {id:103,theme:1,title:'Food Portrait Collage',sub:'Magazine Cut-Out Art',time:25,diff:'Easy',emoji:'🎨',ytDemoId:null,who:'All ages',
+   materials:['Food magazines or printed food images','A3 paper','Glue stick','Scissors','Markers for labels'],
+   steps:['Browse food images together — grandparent points to foods they love.','Cut out favourite foods (children cut; grandparent selects).','Arrange on A3 paper into a "My Family Food Portrait."','Glue down and add labels: Grandma loves..., I love...','Frame it together.'],
+   connectionMoment:'Compare: foods grandparent ate as a child vs what grandchild eats today. What\'s the same? What\'s new?',
+   facilitatorTip:'Print images in advance if magazines unavailable. Include both traditional and modern foods.',
+   elderlyAdaptation:'Grandparent can tear (not cut) images — tearing is easier and still artistically valid.'},
+  {id:104,theme:1,title:'Pandan Leaf Print',sub:'Nature Printing Technique',time:20,diff:'Easy',emoji:'🌿',ytDemoId:null,who:'All ages — multi-sensory, scented',
+   materials:['Fresh pandan leaves (or banana leaf)','Acrylic or washable paint','Paper','Foam tray (palette)','Baby wipes for hands'],
+   steps:['Apply paint to pandan leaf using finger or brush.','Press leaf firmly onto paper, hold 5 seconds.','Peel carefully to reveal the pattern.','Repeat with different colours. Layer for depth.','Discuss: what do you smell? When did you last use pandan?'],
+   connectionMoment:'Pandan is in pandan cake, kueh, nasi lemak... grandparents share which dish they connect to this scent.',
+   facilitatorTip:'This is a multi-sensory activity — the scent triggers memory. Allow quiet time for reminiscing.',
+   elderlyAdaptation:'Elderly can hold the leaf while child presses — collaborative effort, shared creation.'},
+  {id:105,theme:1,title:'Recipe Scroll',sub:'Calligraphy & Illustration',time:35,diff:'Medium',emoji:'📜',ytDemoId:null,who:'Grandparent leads; child scribes and illustrates',
+   materials:['Brown paper (cut like a scroll or aged with tea)','Calligraphy or brush pen','Watercolour pencils','Ribbon to tie scroll'],
+   steps:['Steep a teabag in water. Crumple and wet A4 paper, then flatten to dry (gives aged look).','Grandparent dictates one secret family recipe from memory.','Child writes the recipe in neat lettering (grandparent guides).','Illustrate the key ingredients with watercolour pencils.','Roll into a scroll and tie with ribbon.'],
+   connectionMoment:'The grandparent is the keeper of knowledge. This recipe may never have been written down before.',
+   facilitatorTip:'Frame this as a heritage documentation project. The scroll is a family heirloom.',
+   elderlyAdaptation:'Grandparent speaks; child writes. If grandparent wants to write, provide a large-handle brush pen.'},
+  {id:201,theme:2,title:'Kampong Map Mural',sub:'Memory Mapping on Large Paper',time:40,diff:'Medium',emoji:'🗺️',ytDemoId:null,who:'Grandparent narrates; whole family draws',
+   materials:['Butcher paper (1m x 1m)','Markers in various colours','Pencils','Washi tape to mark sections'],
+   steps:['Lay paper flat on the table or floor.','Grandparent describes their childhood kampong: the well, the big tree, the neighbour\'s house.','Family draws as grandparent speaks — each person draws one element.','Label all features with names the grandparent remembers.','Add a compass rose and title: "Grandma\'s/Grandpa\'s Kampong."'],
+   connectionMoment:'Ask: who was your best friend in the kampong? Where did you play? What happened to your kampong?',
+   facilitatorTip:'This is primarily an oral history activity. The drawing is secondary — the stories are the real treasure.',
+   elderlyAdaptation:'Grandparent can draw one simple shape (a circle for the well) while children flesh out the rest.'},
+  {id:202,theme:2,title:'Shophouse Watercolour',sub:'Loose Watercolour Architecture',time:35,diff:'Medium',emoji:'🏘️',ytDemoId:null,who:'All ages',
+   materials:['Watercolour paper','Watercolour paints','Pencil for sketch','Brush','Water jar','Reference photos of shophouses'],
+   steps:['Lightly sketch a row of shophouses in pencil.','Paint walls in pastel colours (pink, yellow, blue, green).','Add windows, shutters, and the five-foot way (covered walkway).','Paint the sky wash last.','Grandparent points out which colour matches the shophouse they remember.'],
+   connectionMoment:'Which street did your shophouse face? What shop was on the ground floor? Who lived upstairs?',
+   facilitatorTip:'Have photos of Joo Chiat, Chinatown, Little India, and Arab Street shophouses for reference.',
+   elderlyAdaptation:'Provide pre-sketched outlines for elderly to paint within. Focus on colour, not precision.'},
+  {id:203,theme:2,title:'Longkang Diorama',sub:'3D Scene Building',time:45,diff:'Hard',emoji:'💧',ytDemoId:null,who:'Children build under grandparent\'s direction',
+   materials:['Cardboard box','Blue cellophane (water)','Green paint','Clay or playdough','Craft sticks','Small figurines (optional)'],
+   steps:['Paint box interior green (grassy banks) and line the base in blue cellophane (water).','Mould tiny dragonflies, fish, and frogs from clay.','Build the banks with layered cardboard.','Place figurines of children playing at the drain edge.','Grandparent approves the final scene: "Yes, that\'s how it looked!"'],
+   connectionMoment:'Ask grandparent: what did you catch in the longkang? Were you allowed? Did you get in trouble?',
+   facilitatorTip:'Pre-make clay animals in advance to speed up the assembly.',
+   elderlyAdaptation:'Grandparent handles clay animals (gentle squeezing is good for hand dexterity).'},
+  {id:204,theme:2,title:'Night Sky Silhouette',sub:'Singapore Skyline in Silhouette',time:25,diff:'Easy',emoji:'🌃',ytDemoId:null,who:'All ages',
+   materials:['Black card or painted black paper','Yellow/orange watercolour background','Scissors','Glue'],
+   steps:['Wet the watercolour paper and paint a sunset gradient: yellow to orange to deep red.','Let dry completely.','Cut the Singapore skyline from black card: HDB blocks, mosque dome, palm trees, temple.','Glue silhouette onto the sunset background.','Add moon and stars with white paint or gel pen.'],
+   connectionMoment:'Which landmarks does grandparent recognise? What buildings did NOT exist when they were young?',
+   facilitatorTip:'Provide a printed silhouette template for children who find cutting difficult.',
+   elderlyAdaptation:'Elderly can do the sunset watercolour background while children cut the silhouette.'},
+  {id:205,theme:2,title:'Clay MRT Station',sub:'3D Modelling',time:45,diff:'Hard',emoji:'🚇',ytDemoId:null,who:'Children build; grandparent reflects on old transport',
+   materials:['Air-dry clay or playdough','Cardboard base','Acrylic paint','Craft sticks (tracks)','Toothpick flags'],
+   steps:['Build the station platform from flat clay slabs.','Add pillars, benches, and a roof structure.','Press craft sticks into the base as train tracks.','Paint when dry.','Grandparent tells about old Singapore transport: trishaw, bumboat, tram.'],
+   connectionMoment:'Grandparent: how did you get around before the MRT? How long did it take to cross the island?',
+   facilitatorTip:'Compare old and new transport. Let grandparent\'s trishaw story inspire conversation.',
+   elderlyAdaptation:'Grandparent can paint the finished model — brushwork is achievable even with reduced dexterity.'},
+  {id:301,theme:3,title:'Congkak Board',sub:'Functional Game Making',time:40,diff:'Hard',emoji:'🎲',ytDemoId:null,who:'Grandparent teaches the game while building together',
+   materials:['Egg carton (2x12 wells)','Acrylic paint','Seeds or small stones','Glue','Varnish (optional)'],
+   steps:['Paint the egg carton in bright traditional colours.','Let dry. Add a second coat.','Collect 98 small seeds or stones as game pieces.','Grandparent demonstrates how Congkak is played.','Play a round together!'],
+   connectionMoment:'Grandparent teaches Congkak rules — this is their expertise. Children are the students.',
+   facilitatorTip:'Print a Congkak rule card for families not familiar with the game.',
+   elderlyAdaptation:'Elderly handle the seed distribution (good fine motor). Children manage painting.'},
+  {id:302,theme:3,title:'Gasing Painting',sub:'Spin Art Meets Heritage',time:30,diff:'Medium',emoji:'🌀',ytDemoId:null,who:'All ages',
+   materials:['Plain wooden or cardboard spinning top','Acrylic paint','Brushes','Newspaper'],
+   steps:['Paint the top in sections of different colours (do not mix yet).','Spin the top on the newspaper and watch the colours merge!','Let dry. Grandparent spins the top to demonstrate proper technique.','Try different colour combinations and observe the patterns.'],
+   connectionMoment:'Grandparent: did you have a gasing as a child? Did you compete with friends?',
+   facilitatorTip:'Order unpainted wood tops online in advance. The spin-art reveal is always exciting.',
+   elderlyAdaptation:'Grandparent spins the top (wrist control, familiar motion). Children do the painting.'},
+  {id:303,theme:3,title:'Kite Making',sub:'Tissue Paper & Bamboo Strip Kite',time:50,diff:'Hard',emoji:'🪁',ytDemoId:null,who:'Full family collaboration',
+   materials:['Bamboo skewers (2)','Tissue paper (multiple colours)','Glue','String (2m)','Ribbons for tail'],
+   steps:['Cross two bamboo skewers and tie securely at the intersection.','Cut tissue paper into a diamond shape slightly larger than the frame.','Glue tissue paper to the frame, folding and gluing the edges over.','Attach string to the intersection point.','Add ribbon tail. Decorate with geometric patterns.'],
+   connectionMoment:'Grandparent: where did you fly kites? Who taught you? Did you have kite battles?',
+   facilitatorTip:'Fly the kites outside after making them if space allows — the payoff is huge.',
+   elderlyAdaptation:'Grandparent ties the critical knot at the intersection — their kampong rope-tying skill shines here.'},
+  {id:304,theme:3,title:'Sports Hero Puppet',sub:'Paper Bag Puppet & Storytelling',time:30,diff:'Easy',emoji:'🤼',ytDemoId:null,who:'All ages — role play encourages storytelling',
+   materials:['Paper lunch bag (puppet body)','Coloured paper','Googly eyes','Markers','Glue','Fabric scraps for costume'],
+   steps:['Turn paper bag upside down — flap is the mouth.','Create a sports hero face: hair, eyes, expression.','Dress the puppet in a sport\'s costume from fabric scraps.','Grandparent and child each make a puppet of their own sports hero.','Perform a short puppet dialogue: one old-school hero, one modern.'],
+   connectionMoment:'Grandparent\'s hero: P. C. Ramlee? Bruce Lee? A kampong football star? Child\'s hero: a current athlete?',
+   facilitatorTip:'Encourage grandparent to narrate a "match" or "event" through their puppet — children love hearing stories this way.',
+   elderlyAdaptation:'Large puppet is easy to handle. Grandparent focuses on narrative rather than construction.'},
+  {id:305,theme:3,title:'Score Board Mosaic',sub:'Torn Paper Mosaic',time:35,diff:'Medium',emoji:'🏆',ytDemoId:null,who:'All ages — team effort',
+   materials:['A3 black card','Coloured magazine or tissue paper','Glue','Pencil for layout sketch'],
+   steps:['Sketch a scoreboard on black card: team names, score boxes, trophy.','Tear coloured paper into small pieces (1–2 cm).','Fill in the scoreboard design with torn paper mosaic.','Add gold tissue paper for the trophy.','Title it with the family "team name" — vote together!'],
+   connectionMoment:'Grandparent and grandchild each pick a "team." Score celebrates a family achievement.',
+   facilitatorTip:'Frame this as celebrating family score — focus on collective achievement not competition.',
+   elderlyAdaptation:'Tearing paper is achievable for all. Grandparent tears while child places and glues.'},
+  {id:401,theme:4,title:'Unity Handprint Mural',sub:'Multi-Generation Handprint Art',time:30,diff:'Easy',emoji:'🖐️',ytDemoId:null,who:'Whole family — most inclusive activity',
+   materials:['Large canvas or butcher paper (at least 1m wide)','Washable acrylic paint','Paint tray','Baby wipes'],
+   steps:['Lay canvas flat on table or floor.','Each person dips their hand in their chosen colour.','Press handprint onto canvas — overlapping is beautiful.','Write names under each handprint.','Let dry. The mural becomes a family artwork.'],
+   connectionMoment:'Line up handprints by size — baby to grandparent. Discuss what each pair of hands has done and created in their life.',
+   facilitatorTip:'Use different colours for different generations: children = yellow, parents = green, grandparents = red.',
+   elderlyAdaptation:'Assist elderly in pressing hand firmly. Wipe hands immediately after printing. Seated activity.'},
+  {id:402,theme:4,title:'Gotong Royong Quilt Square',sub:'Fabric & Stitch Collaboration',time:45,diff:'Medium',emoji:'🪡',ytDemoId:null,who:'Grandparent leads stitching; child designs',
+   materials:['Cotton fabric squares (20x20 cm)','Fabric markers or fabric paint','Needle and embroidery thread','Scissors'],
+   steps:['Child draws a design on the fabric square representing "helping each other."','Grandparent outlines the design in running stitch or backstitch.','Fill in with fabric paint or more stitching.','If multiple families: join all squares into a group quilt.','Each family keeps their square as a keepsake.'],
+   connectionMoment:'Grandparent teaches child one stitch — passing down a skill. Ask: who taught you to sew?',
+   facilitatorTip:'This works beautifully as a multi-family community project. Collect all squares and display as an installation.',
+   elderlyAdaptation:'Use large-eye needles and thick embroidery thread for easy threading.'},
+  {id:403,theme:4,title:'Memory Jar',sub:'Gratitude & Memory Writing',time:25,diff:'Easy',emoji:'🫙',ytDemoId:null,who:'All ages — quiet, meaningful',
+   materials:['Clean glass jar with lid','Coloured paper strips','Pens','Stickers or washi tape to decorate jar'],
+   steps:['Decorate the jar with stickers and washi tape together.','Each person writes or draws one treasured memory with the family on a strip of paper.','Roll up each strip and place inside the jar.','On a hard day, take out a strip and read it aloud together.','Seal the jar with a ribbon.'],
+   connectionMoment:'Read a few strips aloud now. Grandparent\'s memory and grandchild\'s memory side by side.',
+   facilitatorTip:'For elderly who cannot write, scribe for them. Their spoken words are the most valuable.',
+   elderlyAdaptation:'Draw instead of write. Pre-cut strips. Large-grip pen or marker.'},
+  {id:404,theme:4,title:'Intergenerational Timeline',sub:'Family History on Paper',time:40,diff:'Medium',emoji:'📅',ytDemoId:null,who:'Grandparent narrates; children illustrate',
+   materials:['Long strip of paper (or A3 x3 taped together)','Markers','Ruler','Photographs (optional)','Glue'],
+   steps:['Draw a horizontal line across the full length of paper.','Mark decades: 1950, 1960, 1970... up to 2026.','Grandparent shares key life events — family adds to timeline.','Children draw illustrations beside each event.','Add family photos if available.'],
+   connectionMoment:'When grandparent was born vs when grandchild was born — what world events happened in between?',
+   facilitatorTip:'Connect personal history to national history: Independence 1965, first HDB, MRT opening.',
+   elderlyAdaptation:'Grandparent narrates while seated. Children are the illustrators and scribes.'},
+  {id:405,theme:4,title:'Breathing Mandala',sub:'Mindful Colouring & Music',time:20,diff:'Easy',emoji:'🌸',ytDemoId:null,who:'All ages — calm close to a session',
+   materials:['Pre-printed mandala template','Coloured pencils or fine markers','Calm background music'],
+   steps:['Play "Breathe Just Breathe" or another calm song in background.','Each person picks colours that feel peaceful to them.','Colour the mandala together — each person fills in a section.','Breathe in for 4 counts as you fill one petal, out for 4 on the next.','When done, describe the colours you chose and why.'],
+   connectionMoment:'Ask: what colour feels like calm to you? What colour feels like family? There are no wrong answers.',
+   facilitatorTip:'Print A3 mandalas — larger cells are easier for elderly to colour. Perfect session closing activity.',
+   elderlyAdaptation:'Use chunky coloured pencils. Large mandala template. Seated throughout.'}
+];
 
-    <script>
-        // Source-of-truth access codes per RCA for KAN-17
-        const ACCESS_CODES = {
-            facilitator: 'tmsfac26',
-            institution: 'tmsins26',
-            family: 'tmsfam26'
-        };
+const UCLA_ITEMS=[
+  {id:'u1',q:'How often do you feel you lack companionship?'},
+  {id:'u2',q:'How often do you feel left out?'},
+  {id:'u3',q:'How often do you feel isolated from others?'}
+];
+const UCLA_OPTS=['Hardly ever','Some of the time','Often'];
 
-        function showError(msg) {
-            const el = document.getElementById('error');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
+const OBS_ITEMS=[
+  {id:'o1',q:'Participant smiled or laughed during the session'},
+  {id:'o2',q:'Participant made eye contact with family member'},
+  {id:'o3',q:'Participant initiated a conversation or shared a memory'},
+  {id:'o4',q:'Participant showed physical engagement (movement, clapping, tapping)'}
+];
+const OBS_OPTS=['Not observed','Occasionally','Frequently'];
 
-        function clearError() {
-            const el = document.getElementById('error');
-            el.textContent = '';
-            el.style.display = 'none';
-        }
+const ACCESS_CODES={facilitator:'tmsfac26',institution:'tmsinst26',family:'tmsfam26'};
 
-        function doLogin() {
-            clearError();
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const S={
+  user:null,
+  screen:'login',
+  subscreen:null,
+  elderlyMode:false,
+  songFilter:0,
+  propId:null,
+  oldiesTab:'sg',
+  currentSong:null,
+  moveTab:'Mobile Solo',
+  craftFilter:0,
+  currentCraft:null,
+  sessions:[],
+  newSession:{venue:'',date:'',elderly:0,children:0,theme:0},
+  uclaAnswers:{},
+  obsAnswers:{},
+  npsScore:null,
+  formDone:false,
+  _loginRole:null,
+  _loginPin:null,
+  _loginErr:null,
+  lang:'en',
+  showLangPicker:false
+};
 
-            const role = document.getElementById('role').value;
-            const pin = document.getElementById('pin').value.trim();
+// ─── LANGUAGE STRINGS ──────────────────────────────────
+const LANG={
+  en:{
+    code:'en',flag:'🇸🇬',label:'English',
+    welcome:'Welcome!',
+    chooseLang:'Choose your language',
+    chooseLangSub:'Select the language you are most comfortable with.\nYou can change this anytime.',
+    homeTitle:'SG Heartstrings',
+    chooseActivity:'What would you like to do?',
+    props:'DIY Music Props',propsSub:'Make percussion instruments from recycled materials',
+    oldies:'Oldies & Nursery Rhymes',oldiesSub:'Listen to familiar songs across generations',
+    songs:'New Songs & Movement',songsSub:'12 original TMS songs with movement guides',
+    crafts:'Craft & Paint',craftsSub:'Hands-on techniques for all 4 themes',
+    about:'Singapore\'s first multilingual intergenerational music, movement and craft campaign.',
+    langBtn:'Language 🌐',
+    // Nav
+    navHome:'Home',navProps:'Props',navOldies:'Oldies',navSongs:'Songs',navCrafts:'Crafts',navAbout:'About',
+    // Back buttons
+    backProps:'‹ Back to Props',backCrafts:'‹ Back to Crafts',backSongs:'‹ Back to Songs',
+    // Props screen
+    titleProps:'🥁 DIY Music Props',
+    subProps:'Make percussion instruments from recycled household materials. Grandparents fill, seal and guide — children decorate and play!',
+    howToUseTitle:'💡 How to use',
+    howToUseText:'Make the instrument first, then use it while listening to the songs. Each prop suggests which songs to play along with.',
+    materials:'🛒 Materials Needed',stepByStep:'👷 Step-by-Step',
+    grandparentRole:'👴 Grandparent\'s Role',wisdomPrompt:'💬 Wisdom Prompt',
+    elderlyAdapt:'♿ Elderly Adaptation',playWith:'🎵 Play Along With',
+    // Oldies screen
+    titleOldies:'🎶 Oldies & Nursery Rhymes',
+    tabSgOldies:'🇸🇬 Singapore Oldies',tabNursery:'🌟 Nursery Rhymes',
+    subSgOldies:'Singapore and regional oldies that every grandparent knows by heart. Let the music open up the memories.',
+    subNursery:'Classic nursery rhymes that grandparents can sing with grandchildren — bridging the gap through familiar melodies.',
+    facilTipTitle:'💡 Facilitation Tip',
+    tipSgOldies:'Don\'t just press play — ask grandparents to sing along. Their voice is the most powerful tool in the room.',
+    tipNursery:'Grandparents may know these rhymes in their own language too! Ask them to sing the Mandarin, Malay, or Tamil version alongside the English one.',
+    // Songs screen
+    titleSongs:'🎵 Songs & Movement',
+    subSongs:'12 original TMS songs across 4 themes. 4 songs include full movement guides (look for 💃 tag).',
+    allSongs:'All 12',movementTag:'💃 Movement',
+    aboutSong:'🎙️ About This Song',discussionPrompts:'💬 Discussion Prompts',
+    movementGuide:'💃 Movement Guide',movementCues:'Movement Cues',
+    movementDesc:'4 variations — choose what suits your participant. Mobile = can stand/walk. Immobile = chair-based only.',
+    noMovementMsg:'This song is for listening and discussion. Full movement guides are available for <strong>Chicken Rice</strong>, <strong>I Love My Kampong</strong>, <strong>Sepak Takraw</strong> and <strong>Together We Can Lah!</strong>',
+    // Crafts screen
+    titleCrafts:'🎨 Craft & Paint Techniques',
+    subCrafts:'5 hands-on techniques per theme — elderly, parents and children creating together.',
+    allCrafts:'All 20',connectionMoment:'🌟 Connection Moment',facilitatorTip:'👩‍🏫 Facilitator Tip',
+    // Home
+    aboutHeartstrings:'🌟 About SG Heartstrings',
+    // Difficulty + time
+    easy:'Easy',medium:'Medium',hard:'Hard',min:'min',timeApprox:'~'
+  },
+  zh:{
+    code:'zh',flag:'🇨🇳',label:'中文',
+    welcome:'欢迎！',
+    chooseLang:'选择您的语言',
+    chooseLangSub:'请选择您最熟悉的语言。\n您随时可以更改。',
+    homeTitle:'心弦之歌',
+    chooseActivity:'您想做什么？',
+    props:'自制音乐道具',propsSub:'用回收材料制作打击乐器',
+    oldies:'老歌与童谣',oldiesSub:'共同聆听跨代熟悉的歌曲',
+    songs:'新歌与律动',songsSub:'12首TMS原创歌曲，附律动指南',
+    crafts:'手工与绘画',craftsSub:'四大主题的动手技巧',
+    about:'新加坡首个多语种跨代音乐、律动与手工活动。',
+    langBtn:'语言 🌐',
+    // Nav
+    navHome:'首页',navProps:'道具',navOldies:'老歌',navSongs:'歌曲',navCrafts:'手工',navAbout:'关于',
+    // Back buttons
+    backProps:'‹ 返回道具',backCrafts:'‹ 返回手工',backSongs:'‹ 返回歌曲',
+    // Props screen
+    titleProps:'🥁 自制音乐道具',
+    subProps:'用家居回收材料制作打击乐器。祖父母负责填充、封口和指导——孩子们负责装饰和演奏！',
+    howToUseTitle:'💡 使用方法',
+    howToUseText:'先制作乐器，然后在听歌时使用。每件道具建议搭配哪些歌曲演奏。',
+    materials:'🛒 所需材料',stepByStep:'👷 逐步说明',
+    grandparentRole:'👴 祖父母的角色',wisdomPrompt:'💬 智慧提示',
+    elderlyAdapt:'♿ 适老化调整',playWith:'🎵 搭配歌曲',
+    // Oldies screen
+    titleOldies:'🎶 老歌与童谣',
+    tabSgOldies:'🇸🇬 新加坡老歌',tabNursery:'🌟 童谣',
+    subSgOldies:'每位祖父母都熟记于心的新加坡及区域老歌。让音乐唤起美好回忆。',
+    subNursery:'祖父母可与孙子女一同演唱的经典童谣——用熟悉的旋律跨越代沟。',
+    facilTipTitle:'💡 引导提示',
+    tipSgOldies:'不只是按播放——鼓励祖父母跟唱。他们的声音是现场最有力的工具。',
+    tipNursery:'祖父母或许也会用自己的语言唱这些童谣！请他们在英文版旁边唱出华语、马来语或淡米尔语版。',
+    // Songs screen
+    titleSongs:'🎵 歌曲与律动',
+    subSongs:'12首TMS原创歌曲，涵盖4大主题。4首歌曲含完整律动指南（请查找💃标签）。',
+    allSongs:'全部12首',movementTag:'💃 律动',
+    aboutSong:'🎙️ 关于这首歌',discussionPrompts:'💬 讨论问题',
+    movementGuide:'💃 律动指南',movementCues:'律动提示',
+    movementDesc:'4种变体——选择适合参与者的。可动组=可以站立/走动。不可动组=仅限椅子。',
+    noMovementMsg:'这首歌用于聆听和讨论。《鸡饭》《我爱我的甘榜》《藤球》和《我们能的啦！》提供完整律动指南。',
+    // Crafts screen
+    titleCrafts:'🎨 手工与绘画技巧',
+    subCrafts:'每个主题5种动手技巧——长者、家长和孩子共同创作。',
+    allCrafts:'全部20种',connectionMoment:'🌟 连接时刻',facilitatorTip:'👩‍🏫 引导员提示',
+    // Home
+    aboutHeartstrings:'🌟 关于心弦之歌',
+    easy:'简单',medium:'中等',hard:'较难',min:'分钟',timeApprox:'约'
+  },
+  ms:{
+    code:'ms',flag:'🇲🇾',label:'Melayu',
+    welcome:'Selamat datang!',
+    chooseLang:'Pilih bahasa anda',
+    chooseLangSub:'Pilih bahasa yang paling selesa untuk anda.\nAnda boleh menukarnya bila-bila masa.',
+    homeTitle:'SG Heartstrings',
+    chooseActivity:'Apa yang anda ingin lakukan?',
+    props:'Alat Muzik DIY',propsSub:'Buat alat perkusi dari bahan kitar semula',
+    oldies:'Lagu Lama & Nurseri',oldiesSub:'Dengar lagu-lagu yang dikenali merentas generasi',
+    songs:'Lagu Baru & Gerakan',songsSub:'12 lagu asal TMS dengan panduan gerakan',
+    crafts:'Kraftangan & Lukisan',craftsSub:'Teknik hands-on untuk 4 tema',
+    about:'Kempen muzik, gerakan dan kraftangan pelbagai bahasa pertama di Singapura.',
+    langBtn:'Bahasa 🌐',
+    // Nav
+    navHome:'Utama',navProps:'Alat',navOldies:'Lama',navSongs:'Lagu',navCrafts:'Kraf',navAbout:'Tentang',
+    // Back buttons
+    backProps:'‹ Kembali ke Alat',backCrafts:'‹ Kembali ke Kraf',backSongs:'‹ Kembali ke Lagu',
+    // Props screen
+    titleProps:'🥁 Alat Muzik DIY',
+    subProps:'Buat alat perkusi dari bahan rumah kitar semula. Datuk/Nenek isi, meterai dan pandu — kanak-kanak hiaskan dan main!',
+    howToUseTitle:'💡 Cara Guna',
+    howToUseText:'Buat alat muzik dahulu, kemudian gunakannya semasa mendengar lagu. Setiap prop mencadangkan lagu untuk dimainkan bersama.',
+    materials:'🛒 Bahan Diperlukan',stepByStep:'👷 Langkah demi Langkah',
+    grandparentRole:'👴 Peranan Datuk/Nenek',wisdomPrompt:'💬 Soalan Kebijaksanaan',
+    elderlyAdapt:'♿ Penyesuaian Warga Emas',playWith:'🎵 Main Bersama Lagu',
+    // Oldies screen
+    titleOldies:'🎶 Lagu Lama & Lagu Kanak-kanak',
+    tabSgOldies:'🇸🇬 Lagu Lama Singapura',tabNursery:'🌟 Lagu Kanak-kanak',
+    subSgOldies:'Lagu-lagu lama Singapura dan serantau yang setiap datuk/nenek hafal. Biarkan muzik membuka kenangan.',
+    subNursery:'Lagu kanak-kanak klasik yang datuk/nenek boleh nyanyi bersama cucu — merapatkan jurang melalui melodi yang dikenali.',
+    facilTipTitle:'💡 Tip Fasilitasi',
+    tipSgOldies:'Jangan sekadar tekan main — minta datuk/nenek menyanyi bersama. Suara mereka adalah alat paling kuat di bilik.',
+    tipNursery:'Datuk/nenek mungkin tahu rima ini dalam bahasa mereka sendiri juga! Minta mereka nyanyikan versi Cina, Melayu atau Tamil bersama versi Inggeris.',
+    // Songs screen
+    titleSongs:'🎵 Lagu & Gerakan',
+    subSongs:'12 lagu asal TMS merentas 4 tema. 4 lagu termasuk panduan gerakan penuh (cari tanda 💃).',
+    allSongs:'Semua 12',movementTag:'💃 Gerakan',
+    aboutSong:'🎙️ Tentang Lagu Ini',discussionPrompts:'💬 Soalan Perbincangan',
+    movementGuide:'💃 Panduan Gerakan',movementCues:'Isyarat Gerakan',
+    movementDesc:'4 variasi — pilih yang sesuai untuk peserta anda. Mobil = boleh berdiri/berjalan. Tidak mobil = berasaskan kerusi sahaja.',
+    noMovementMsg:'Lagu ini untuk mendengar dan berbincang. Panduan gerakan penuh tersedia untuk <strong>Chicken Rice</strong>, <strong>I Love My Kampong</strong>, <strong>Sepak Takraw</strong> dan <strong>Together We Can Lah!</strong>',
+    // Crafts screen
+    titleCrafts:'🎨 Teknik Kraf & Lukisan',
+    subCrafts:'5 teknik hands-on setiap tema — warga emas, ibu bapa dan kanak-kanak mencipta bersama.',
+    allCrafts:'Semua 20',connectionMoment:'🌟 Momen Sambungan',facilitatorTip:'👩‍🏫 Tip Fasilitator',
+    // Home
+    aboutHeartstrings:'🌟 Tentang SG Heartstrings',
+    easy:'Mudah',medium:'Sederhana',hard:'Sukar',min:'min',timeApprox:'~'
+  },
+  ta:{
+    code:'ta',flag:'🇮🇳',label:'தமிழ்',
+    welcome:'வரவேற்கிறோம்!',
+    chooseLang:'உங்கள் மொழியை தேர்வு செய்யுங்கள்',
+    chooseLangSub:'நீங்கள் மிகவும் வசதியாக இருக்கும் மொழியை தேர்வு செய்யுங்கள்.\nஎப்போது வேண்டுமானாலும் மாற்றலாம்.',
+    homeTitle:'SG Heartstrings',
+    chooseActivity:'நீங்கள் என்ன செய்ய விரும்புகிறீர்கள்?',
+    props:'DIY இசை கருவிகள்',propsSub:'மறுசுழற்சி பொருட்களிலிருந்து தாள இசைக்கருவிகள்',
+    oldies:'பழைய பாடல்கள் & குழந்தை பாடல்கள்',oldiesSub:'தலைமுறைகள் கடந்த பழக்கமான பாடல்களை கேளுங்கள்',
+    songs:'புதிய பாடல்கள் & இயக்கம்',songsSub:'12 TMS அசல் பாடல்கள் மற்றும் இயக்க வழிகாட்டிகள்',
+    crafts:'கைவினை & ஓவியம்',craftsSub:'4 தீம்களுக்கான நேரடி நுட்பங்கள்',
+    about:'சிங்கப்பூரின் முதல் பல்மொழி தலைமுறை இசை, இயக்கம் மற்றும் கைவினை திட்டம்.',
+    langBtn:'மொழி 🌐',
+    // Nav
+    navHome:'முகப்பு',navProps:'கருவிகள்',navOldies:'பழையவை',navSongs:'பாடல்கள்',navCrafts:'கைவினை',navAbout:'பற்றி',
+    // Back buttons
+    backProps:'‹ கருவிகளுக்கு திரும்பு',backCrafts:'‹ கைவினைக்கு திரும்பு',backSongs:'‹ பாடல்களுக்கு திரும்பு',
+    // Props screen
+    titleProps:'🥁 DIY இசை கருவிகள்',
+    subProps:'வீட்டு மறுசுழற்சி பொருட்களிலிருந்து தாள இசைக்கருவிகள் செய்யுங்கள். தாத்தா/பாட்டி நிரப்பி மூடி வழிகாட்டுவார்கள் — குழந்தைகள் அலங்கரித்து விளையாடுவார்கள்!',
+    howToUseTitle:'💡 எப்படி பயன்படுத்துவது',
+    howToUseText:'முதலில் இசைக்கருவி செய்து, பாடல் கேட்கும்போது பயன்படுத்துங்கள். ஒவ்வொரு கருவியும் எந்த பாடல்களுடன் பயன்படுத்தலாம் என்று பரிந்துரைக்கும்.',
+    materials:'🛒 தேவையான பொருட்கள்',stepByStep:'👷 படிப்படியாக',
+    grandparentRole:'👴 தாத்தா/பாட்டியின் பங்கு',wisdomPrompt:'💬 ஞான கேள்வி',
+    elderlyAdapt:'♿ மூத்தோர் தழுவல்',playWith:'🎵 சேர்ந்து வாசிக்கவும்',
+    // Oldies screen
+    titleOldies:'🎶 பழைய பாடல்கள் & குழந்தை பாடல்கள்',
+    tabSgOldies:'🇸🇬 சிங்கப்பூர் பழைய பாடல்கள்',tabNursery:'🌟 குழந்தை பாடல்கள்',
+    subSgOldies:'ஒவ்வொரு தாத்தா/பாட்டிக்கும் மனப்பாடமான சிங்கப்பூர் பழைய பாடல்கள். இசை நினைவுகளை திறக்கட்டும்.',
+    subNursery:'தாத்தா/பாட்டி பேரக்குழந்தைகளுடன் பாடக்கூடிய கிளாசிக் பாடல்கள் — பழக்கமான இசை மூலம் தலைமுறை இடைவெளி குறையும்.',
+    facilTipTitle:'💡 வழிகாட்டல் குறிப்பு',
+    tipSgOldies:'வெறுமனே இசைக்காதீர்கள் — தாத்தா/பாட்டியை சேர்ந்து பாட சொல்லுங்கள். அவர்களின் குரலே அறையில் மிகவும் சக்திவாய்ந்த கருவி.',
+    tipNursery:'தாத்தா/பாட்டிக்கு இந்த பாடல்கள் தங்கள் மொழியிலும் தெரிந்திருக்கலாம்! ஆங்கிலத்துடன் மாண்டரின், மலாய் அல்லது தமிழ் பதிப்பை பாட சொல்லுங்கள்.',
+    // Songs screen
+    titleSongs:'🎵 பாடல்கள் & இயக்கம்',
+    subSongs:'4 தீம்களில் 12 TMS அசல் பாடல்கள். 4 பாடல்களில் முழு இயக்க வழிகாட்டிகள் உள்ளன (💃 குறிப்பு தேடுங்கள்).',
+    allSongs:'அனைத்தும் 12',movementTag:'💃 இயக்கம்',
+    aboutSong:'🎙️ இந்த பாடலைப் பற்றி',discussionPrompts:'💬 விவாத வினாக்கள்',
+    movementGuide:'💃 இயக்க வழிகாட்டி',movementCues:'இயக்க குறிப்புகள்',
+    movementDesc:'4 மாறுபாடுகள் — பங்கேற்பாளருக்கு ஏற்றதை தேர்வு செய்யுங்கள். நகரக்கூடியவர் = நிற்கலாம்/நடக்கலாம். நகர முடியாதவர் = நாற்காலி மட்டும்.',
+    noMovementMsg:'இந்த பாடல் கேட்கவும் விவாதிக்கவும். <strong>Chicken Rice</strong>, <strong>I Love My Kampong</strong>, <strong>Sepak Takraw</strong> மற்றும் <strong>Together We Can Lah!</strong> க்கு முழு இயக்க வழிகாட்டிகள் உள்ளன.',
+    // Crafts screen
+    titleCrafts:'🎨 கைவினை & ஓவிய நுட்பங்கள்',
+    subCrafts:'ஒவ்வொரு தீம்மிலும் 5 நேரடி நுட்பங்கள் — மூத்தோர், பெற்றோர் மற்றும் குழந்தைகள் சேர்ந்து படைக்கிறார்கள்.',
+    allCrafts:'அனைத்தும் 20',connectionMoment:'🌟 இணைப்பு தருணம்',facilitatorTip:'👩‍🏫 வழிகாட்டி குறிப்பு',
+    // Home
+    aboutHeartstrings:'🌟 SG Heartstrings பற்றி',
+    easy:'எளிது',medium:'நடுத்தரம்',hard:'கடினம்',min:'நிமிடம்',timeApprox:'~'
+  }
+};
 
-            if (!role) {
-                showError('Please select a role.');
-                return;
-            }
-            if (!pin) {
-                showError('Please enter your access code.');
-                return;
-            }
+// ═══════════════════════════════════════════════════════
+//  PROP TRANSLATIONS (steps, elderlyRole, elderlyAdaptation)
+// ═══════════════════════════════════════════════════════
+const PROP_TRANS={
+  p1:{
+    zh:{sub:'用厨房储粮制作的沙锤',materials:['塑料瓶（如矿泉水瓶）','干米或扁豆','胶带或橡皮筋','装饰用贴纸或和纸胶带'],wisdomPrompt:'祖父母，您小时候有没有自己做过玩具或乐器？',steps:['将约¼杯干米倒入瓶中。','紧紧盖上瓶盖，用胶带封口。','摇一摇测试声音——想更响亮就再加些米。','用贴纸或和纸胶带装饰。'],elderlyRole:'由祖父母来填米和封口，感受重量，决定加多少米。',elderlyAdaptation:'使用较大瓶子，方便握持。预先剪好胶带条。'},
+    ms:{sub:'Gaya Marakas dari bahan dapur',materials:['Botol plastik (cth. air mineral)','Beras kering atau lentil','Pita pelekat atau gelang getah','Pelekat atau pita washi untuk hiasan'],wisdomPrompt:'Datuk/Nenek, pernahkah buat mainan atau alat muzik sendiri masa kecil dulu?',steps:['Tuangkan ¼ cawan beras kering ke dalam botol.','Tutup penutup dengan ketat dan balut dengan pita.','Goncang untuk menguji bunyi — tambah beras untuk bunyi lebih kuat.','Hiaskan dengan pelekat atau pita washi.'],elderlyRole:'Datuk/Nenek mengisi dan memetai botol. Mereka memutuskan berapa banyak beras.',elderlyAdaptation:'Gunakan botol lebih besar dan mudah dipegang. Potong jalur pita terlebih dahulu.'},
+    ta:{sub:'சமையலறை பொருட்களிலிருந்து மராகாஸ்',materials:['பிளாஸ்டிக் பாட்டில் (தாது நீர் பாட்டில்)','உலர் அரிசி அல்லது பயறு','டேப் அல்லது ரப்பர் பட்டை','அலங்கரிக்க ஸ்டிக்கர் அல்லது வாஷி டேப்'],wisdomPrompt:'தாத்தா/பாட்டி, சிறுவயதில் உங்கள் சொந்த விளையாட்டு பொருள் அல்லது இசைக்கருவி செய்தீர்களா?',steps:['பாட்டிலில் கால் கப் உலர் அரிசி ஊற்றுங்கள்.','மூடியை இறுக்கமாக மூடி டேப் ஒட்டுங்கள்.','ஒலியை சோதிக்க குலுக்குங்கள் — அதிக ஒலிக்கு மேலும் அரிசி சேருங்கள்.','ஸ்டிக்கர் அல்லது வாஷி டேப்பால் அலங்கரிக்கவும்.'],elderlyRole:'தாத்தா/பாட்டி பாட்டிலை நிரப்பி மூடுவார்கள். எவ்வளவு அரிசி என்பதை அவர்களே முடிவு செய்யட்டும்.',elderlyAdaptation:'பிடிக்க எளிதான பெரிய பாட்டில் பயன்படுத்துங்கள். டேப் துண்டுகளை முன்கூட்டியே வெட்டி வையுங்கள்.'}
+  },
+  p2:{
+    zh:{sub:'用回收罐制作的共鸣鼓',materials:['空锡罐（洗净，无锋利边缘）','气球或弹力布料','橡皮筋','两支铅笔或筷子（鼓槌）','包裹罐口的毛毡或泡棉（安全用）'],wisdomPrompt:'您年轻时的庆典上有没有鼓或打击乐器？',steps:['用胶带或泡棉垫好罐口，避免割伤。','剪开气球，绷紧在罐口上。','用橡皮筋固定好。','用铅笔或筷子当鼓槌，装饰罐子外部。'],elderlyRole:'祖父母指导气球膜的松紧——他们知道好鼓的手感！',elderlyAdaptation:'预先将气球绷好，方便手力较弱的老人。使用泡棉鼓槌，敲击更轻柔。'},
+    ms:{sub:'Tukarkan tin kitar semula menjadi dram bergema',materials:['Tin kosong (dicuci, tiada tepi tajam)','Belon atau kain elastik','Gelang getah','Dua pensel atau penyepit (stik dram)','Felt atau span untuk balut rim (keselamatan)'],wisdomPrompt:'Adakah terdapat dram atau alat perkusi semasa perayaan masa kecil anda?',steps:['Lindungi tepi tin dengan pita atau span.','Potong belon dan regangkan di atas bahagian atas tin.','Ikat dengan gelang getah dengan ketat.','Gunakan pensel atau penyepit sebagai stik dram dan hias luar tin.'],elderlyRole:'Datuk/Nenek menasihati tentang ketegangan membran belon — mereka tahu rasa dram yang baik!',elderlyAdaptation:'Regangkan belon terlebih dahulu untuk warga emas yang kurang kekuatan. Gunakan stik span untuk pukulan lebih lembut.'},
+    ta:{sub:'மறுசுழற்சி டின்களை டிரம்களாக மாற்றுங்கள்',materials:['காலி டின் (கழுவியது, கூர்மையான விளிம்புகள் இல்லாதது)','பலூன் அல்லது நீட்டக்கூடிய துணி','ரப்பர் பட்டை','இரண்டு பென்சில் அல்லது சாப்ஸ்டிக் (டிரம்ஸ்டிக்)','விளிம்பை சுற்ற ஃபெல்ட் அல்லது நுரை (பாதுகாப்பு)'],wisdomPrompt:'உங்கள் இளமையில் விழாக்களில் டிரம் அல்லது தாள இசைக்கருவிகள் இருந்தனவா?',steps:['காயம் ஏற்படாமல் வளையத்தை டேப் அல்லது நுரையால் பொதியுங்கள்.','பலூனை வெட்டி டின்னின் மேல் இறுக்கமாக கட்டுங்கள்.','ரப்பர் பட்டையால் நன்கு இறுக்குங்கள்.','பென்சில் அல்லது சாப்ஸ்டிக்கை டிரம்ஸ்டிக்காக பயன்படுத்தி அலங்கரிக்கவும்.'],elderlyRole:'தாத்தா/பாட்டி பலூன் இறுக்கம் பற்றி வழிகாட்டுவார்கள் — நல்ல டிரம்மின் உணர்வு அவர்களுக்குத் தெரியும்!',elderlyAdaptation:'கை வலிமை குறைந்தவர்களுக்கு முன்கூட்டியே பலூனை நீட்டி வையுங்கள். மென்மையான நுரை டிரம்ஸ்டிக் பயன்படுத்துங்கள்.'}
+  },
+  p3:{
+    zh:{sub:'叮当铃与节奏合一',materials:['2个纸盘','小铃铛','打孔器','毛线或丝带','马克笔和贴纸'],wisdomPrompt:'您有没有演奏过三角铁？合唱团？学校演出？',steps:['用马克笔和贴纸装饰两个纸盘。','将纸盘面对面叠放，沿边缘每5厘米打一个洞。','将毛线穿过每个洞并挂上铃铛。','系紧固定，摇动或敲击即可演奏！'],elderlyRole:'祖父母穿毛线——很好的手指运动。他们也决定装饰图案。',elderlyAdaptation:'使用预先打好的洞。将洞口加大方便穿线。使用较粗的毛线。'},
+    ms:{sub:'Loceng dan irama dalam satu',materials:['2 pinggan kertas','Loceng kecil','Penebuk lubang','Benang atau riben','Penanda dan pelekat'],wisdomPrompt:'Pernahkah anda bermain tamburin? Dalam koir? Persembahan sekolah?',steps:['Hiaskan kedua-dua pinggan dengan penanda dan pelekat.','Pegang pinggan muka ke muka. Tebuk lubang di sekeliling tepi setiap 5cm.','Masukkan benang melalui setiap lubang dan ikat loceng kecil.','Ikat dengan kemas. Goncang atau tepuk untuk bermain!'],elderlyRole:'Datuk/Nenek memasukkan benang melalui lubang — senaman motor halus yang bagus. Mereka juga memilih reka bentuk hiasan.',elderlyAdaptation:'Gunakan lubang yang telah ditebuk. Besarkan lubang untuk memudahkan benang. Gunakan benang tebal.'},
+    ta:{sub:'ஜிங்கிள் மணிகளும் தாளமும் ஒன்றாக',materials:['2 காகித தட்டுகள்','சிறிய ஜிங்கிள் மணிகள்','துளையிடும் கருவி','நூல் அல்லது ரிப்பன்','மார்க்கர் மற்றும் ஸ்டிக்கர்கள்'],wisdomPrompt:'நீங்கள் முன்பு தம்புரை வாசித்தீர்களா? கோரஸில்? பள்ளி நிகழ்ச்சியில்?',steps:['இரண்டு காகித தட்டுகளை மார்க்கர் மற்றும் ஸ்டிக்கரால் அலங்கரிக்கவும்.','தட்டுகளை முகம் ஒன்றாக வையுங்கள். ஒவ்வொரு 5 செமீக்கும் துளை போடுங்கள்.','ஒவ்வொரு துளையிலும் நூல் கோர்த்து சிறிய மணி கட்டுங்கள்.','நன்கு கட்டுங்கள். குலுக்கியோ தட்டியோ வாசிக்கலாம்!'],elderlyRole:'தாத்தா/பாட்டி நூல் கோர்ப்பார்கள் — நல்ல விரல் உடற்பயிற்சி. அலங்கார வடிவமும் அவர்களே தேர்வு செய்யலாம்.',elderlyAdaptation:'முன்பே துளை போடப்பட்டதைப் பயன்படுத்துங்கள். பெரிய துளைகள் போடுங்கள். தடிமனான நூல் பயன்படுத்துங்கள்.'}
+  },
+  p4:{
+    zh:{sub:'经典课堂打击乐器',materials:['两根木棍（30厘米，1.5厘米直径）','砂纸（磨光两端）','油漆或橡皮筋作为握把'],wisdomPrompt:'您在学校集会或社区活动上跟着什么歌曲打拍子？',steps:['打磨每根木棍的两端至光滑——没有毛刺。','涂上油漆或缠上橡皮筋作为握把和装饰。','一只手横握一根棍，用另一根敲打。','练习基本节奏：♩♩♩♩，再练习 ♩♩♪♩♪'],elderlyRole:'祖父母演示克拉维节奏或他们记得的任何节奏。他们是老师！',elderlyAdaptation:'使用更轻、更细的木棍。缠上防滑握把胶带，方便关节炎患者使用。'},
+    ms:{sub:'Perkusi bilik darjah klasik',materials:['Dua batang kayu (30cm, 1.5cm diameter)','Kertas pasir (untuk haluskan hujung)','Cat atau gelang getah untuk pegangan'],wisdomPrompt:'Lagu apa yang anda tepuk tangan semasa perhimpunan sekolah atau acara komuniti?',steps:['Amplas kedua-dua hujung setiap kayu hingga licin — tiada serpihan.','Cat atau balut dengan gelang getah untuk pegangan dan warna.','Pegang satu kayu mendatar di tapak tangan, ketuk dengan yang satu lagi.','Latih irama asas: ♩♩♩♩ kemudian ♩♩♪♩♪'],elderlyRole:'Datuk/Nenek menunjukkan irama clave atau mana-mana irama lama yang mereka ingat. Mereka adalah guru!',elderlyAdaptation:'Gunakan kayu yang lebih ringan dan nipis. Balut dengan pita cengkaman untuk tangan yang sakit sendi.'},
+    ta:{sub:'கிளாசிக் வகுப்பறை தாள இசை',materials:['இரண்டு மரக்கோல்கள் (30செமீ, 1.5செமீ விட்டம்)','சாண்ட்பேப்பர் (முனைகளை மசிக்க)','பிடிக்க பெயிண்ட் அல்லது ரப்பர் பட்டை'],wisdomPrompt:'பள்ளி சட்டசபையில் அல்லது சமூக நிகழ்வுகளில் எந்த பாடல்களுக்கு கைதட்டினீர்கள்?',steps:['ஒவ்வொரு கோலின் இரு முனைகளையும் மென்மையாக தேய்த்து மினுக்குங்கள்.','பிடிக்கும் வசதிக்கு பெயிண்ட் பூசுங்கள் அல்லது ரப்பர் பட்டை சுற்றுங்கள்.','ஒரு கோலை உள்ளங்கையில் கிடைக்காக வைத்து மற்றதால் தட்டுங்கள்.','அடிப்படை தாளங்களை பயிற்சி செய்யுங்கள்: ♩♩♩♩ பிறகு ♩♩♪♩♪'],elderlyRole:'தாத்தா/பாட்டி கிளேவ் அல்லது நினைவிலுள்ள தாளத்தை காட்டுவார்கள். அவர்களே ஆசிரியர்!',elderlyAdaptation:'இலகுவான, மெல்லிய கோல்கள் பயன்படுத்துங்கள். மூட்டு வலிக்கு நழுவா பிடியுடன் சுற்றுங்கள்.'}
+  },
+  p5:{
+    zh:{sub:'通过弦探索音调与张力',materials:['鞋盒或纸巾盒','各种粗细的橡皮筋','铅笔或筷子（琴桥）','剪刀'],wisdomPrompt:'您有没有弹过弦乐器——吉他、二胡、西塔琴？您弹什么歌曲？',steps:['取下盒盖（或在盒盖上剪一个大椭圆形洞）。','沿盒身纵向绷上橡皮筋，跨过洞口。','在橡皮筋下靠近一端处塞入铅笔（琴桥），将琴弦撑起。','拨动橡皮筋——越粗音越低，越细音越高！'],elderlyRole:'祖父母决定哪根橡皮筋放哪里——音调分类！也可以像真吉他一样装饰琴体。',elderlyAdaptation:'预先将橡皮筋套在盒上。祖父母可以用铅笔尖拨弦，不必用指尖。'},
+    ms:{sub:'Teroka pic dan ketegangan melalui tali',materials:['Kotak kasut atau kotak tisu','Pelbagai getah (ketebalan berbeza)','Pensel atau penyepit (jambatan)','Gunting'],wisdomPrompt:'Pernahkah anda bermain alat bertali — gitar, erhu, sitar? Lagu apa yang anda mainkan?',steps:['Buang penutup kotak (atau potong lubang oval besar di penutup).','Regangkan getah panjang kotak melepasi lubang.','Selitkan pensel di bawah getah berhampiran satu hujung (jambatan).','Petik getah — lebih tebal = pic lebih rendah, lebih nipis = lebih tinggi!'],elderlyRole:'Datuk/Nenek memilih getah mana yang diletakkan di mana — pengisihan pic! Boleh juga hiaskan badan seperti gitar sebenar.',elderlyAdaptation:'Regangkan getah terlebih dahulu. Datuk/Nenek boleh memetik dengan hujung pensel bukannya hujung jari.'},
+    ta:{sub:'கம்பிகள் மூலம் தொனி மற்றும் இறுக்கத்தை ஆராயுங்கள்',materials:['ஷூ பாக்ஸ் அல்லது டிஷ்யூ பாக்ஸ்','பல்வேறு தடிமன் ரப்பர் பட்டைகள்','பென்சில் அல்லது சாப்ஸ்டிக் (பிரிட்ஜ்)','கத்தரிக்கோல்'],wisdomPrompt:'நீங்கள் கம்பி இசைக்கருவி வாசித்தீர்களா — கிதார், ஏரு, சிட்டார்? என்ன பாடல்கள் வாசித்தீர்கள்?',steps:['பெட்டியின் மூடியை அகற்றுங்கள் (அல்லது மூடியில் பெரிய ஓவல் துளை வெட்டுங்கள்).','பெட்டியின் நீளவாக்கில் ரப்பர் பட்டைகளை துளை மீது நீட்டுங்கள்.','ஒரு முனையில் பட்டைகளின் கீழ் பென்சில் நுழைத்து (பிரிட்ஜ்) உயர்த்துங்கள்.','பட்டைகளை மீட்டுங்கள் — தடிமன் = குறைந்த ஒலி, மெல்லியது = அதிக ஒலி!'],elderlyRole:'தாத்தா/பாட்டி எந்த ரப்பர் பட்டை எங்கு என்று தீர்மானிப்பார்கள். உண்மையான கிதாரைப் போல் அலங்கரிக்கலாம்.',elderlyAdaptation:'ரப்பர் பட்டைகளை முன்கூட்டியே நீட்டி வையுங்கள். விரல் நுனிக்கு பதில் பென்சில் நுனியால் மீட்டலாம்.'}
+  },
+  p6:{
+    zh:{sub:'把雨声带进室内',materials:['纸巾卷或包装纸管','铝箔纸（长条）','干米或小珠子','胶带','密封两端的厚纸','油漆或和纸胶带'],wisdomPrompt:'祖父母：您年轻时对季风雨有什么记忆？',steps:['将长条铝箔纸揉成螺旋形，塞入管中。','用胶带和厚纸封住一端。','倒入少量米粒或小珠子。','封住另一端，用颜料或和纸胶带装饰外部。','慢慢翻转，聆听雨声！'],elderlyRole:'祖父母封住两端并第一个翻转雨棍——他们的耐心创造出最好的雨声。',elderlyAdaptation:'使用较短、较宽的管子，方便握持。预先将铝箔卷好，让老人直接塞入。'},
+    ms:{sub:'Bawa bunyi hujan ke dalam rumah',materials:['Gulung tuala kertas atau tiub kertas balutan','Timah (jalur panjang)','Beras kering atau manik kecil','Pita pelekat','Kertas untuk meterai hujung','Cat atau pita washi'],wisdomPrompt:'Datuk/Nenek: apa yang anda ingat tentang hujan monsun semasa kecil dulu?',steps:['Remas jalur panjang timah ke dalam bentuk lingkaran dan masukkan ke dalam tiub.','Meteraikan satu hujung dengan pita dan kertas tebal.','Tuangkan sedikit beras atau manik kecil.','Meteraikan hujung lain. Hiaskan luar dengan cat atau pita washi.','Terbalikkan perlahan untuk mendengar bunyi hujan!'],elderlyRole:'Datuk/Nenek memetai kedua-dua hujung dan orang pertama yang menerbalikkannya — kesabaran mereka mencipta bunyi hujan terbaik.',elderlyAdaptation:'Gunakan tiub yang lebih pendek dan lebih lebar. Gulung timah terlebih dahulu untuk warga emas.'},
+    ta:{sub:'மழை ஒலியை வீட்டிற்குள் கொண்டு வாருங்கள்',materials:['காகித துண்டு சுருள் அல்லது பேக்கிங் காகித குழாய்','டின்ஃபாயல் (நீண்ட துண்டு)','உலர் அரிசி அல்லது சிறிய மணிகள்','டேப்','முனைகளை மூட காகிதம்','வண்ணம் அல்லது வாஷி டேப்'],wisdomPrompt:'தாத்தா/பாட்டி: இளமையில் பருவமழை பற்றி என்ன நினைவிருக்கிறது?',steps:['நீண்ட டின்ஃபாயல் துண்டை சுருட்டி குழாயில் திணியுங்கள்.','ஒரு முனையை டேப் மற்றும் தடிமனான காகிதத்தால் மூடுங்கள்.','சிறிய அளவு அரிசி அல்லது மணிகள் ஊற்றுங்கள்.','மறு முனையை மூடி வெளிப்புறத்தை வண்ணம் அல்லது வாஷி டேப்பால் அலங்கரிக்கவும்.','மெதுவாக கவிழ்த்து மழை ஒலி கேளுங்கள்!'],elderlyRole:'தாத்தா/பாட்டி இரு முனைகளையும் மூடி முதலில் கவிழ்ப்பார்கள் — அவர்களின் பொறுமையே சிறந்த மழை ஒலியை உருவாக்கும்.',elderlyAdaptation:'பிடிக்க எளிதான குட்டையான, அகலமான குழாய் பயன்படுத்துங்கள். டின்ஃபாயலை முன்கூட்டியே சுருட்டி வையுங்கள்.'}
+  }
+};
 
-            const expected = ACCESS_CODES[role];
-            if (!expected) {
-                showError('Unknown role selected.');
-                return;
-            }
+// ═══════════════════════════════════════════════════════
+//  MOVEMENT TRANSLATIONS (desc + cues, for 4 movement songs)
+// ═══════════════════════════════════════════════════════
+const MOVE_TRANS={
+  1:{ // Chicken Rice
+    'Mobile Solo':{
+      zh:{desc:'站立或坐椅子，有空间摇摆。诗句时原地踏步，副歌时双臂像搅拌大锅一样摆动。',cues:['诗句：双脚交替抬膝','副歌：大幅度搅拌圆圈','桥段：拍大腿打节拍']},
+      ms:{desc:'Berdiri atau duduk di kerusi dengan ruang untuk berayun. Berjalan di tempat semasa bait, ayunkan tangan seperti mengacau periuk besar semasa korus.',cues:['Bait: angkat lutut bergiliran','Korus: acau dalam bulatan besar','Jambatan: tepuk peha mengikut irama']},
+      ta:{desc:'நிற்கவும் அல்லது அசைய இடமுள்ள நாற்காலியில் அமரவும். வசனங்களில் இடத்திலேயே நடைபோடுங்கள், கோரஸில் பெரிய பாத்திரத்தை கிளறுவது போல் கைகளை அசையுங்கள்.',cues:['வசனம்: மாறி மாறி முழங்கால் உயர்த்துங்கள்','கோரஸ்: பெரிய வட்டங்களில் கைகளை சுழற்றுங்கள்','பாலம்: தொடைகளை தாளத்தில் தட்டுங்கள்']}
+    },
+    'Mobile+Partner':{
+      zh:{desc:'面对面站立。互相镜像模仿搅锅动作。副歌时互传想象中的饭碗。',cues:['诗句：镜像抬膝','副歌：左右传递饭碗','桥段：合拍鼓掌']},
+      ms:{desc:'Hadap rakan. Cerminkan gerakan mengacau periuk masing-masing. Hantar mangkuk nasi khayalan semasa korus.',cues:['Bait: cerminkan angkat lutut','Korus: hantar mangkuk ke kiri dan kanan','Jambatan: tepuk tangan pada detik 1']},
+      ta:{desc:'நேருக்கு நேர் நில்லுங்கள். பாத்திரம் கிளறும் அசைவை பிரதிபலிக்கவும். கோரஸில் கற்பனை சாதக கிண்ணத்தை கடத்துங்கள்.',cues:['வசனம்: முழங்கால் உயர்த்தலை பிரதிபலிக்கவும்','கோரஸ்: கிண்ணத்தை இருபுறமும் கடத்துங்கள்','பாலம்: 1ஆம் தாளத்தில் கைதட்டுங்கள்']}
+    },
+    'Immobile Solo':{
+      zh:{desc:'坐着，不需要站立。所有动作从肩膀以上和双手完成。',cues:['诗句：手指在腿上打鼓','副歌：双手像搅拌一样画圈','桥段：轻轻-轻轻-大声鼓掌']},
+      ms:{desc:'Duduk, tidak perlu berdiri. Semua gerakan dari bahu ke atas dan tangan.',cues:['Bait: jari mengetuk atas riba','Korus: tangan membulat seperti mengacau','Jambatan: pola tepuk lembut-lembut-kuat']},
+      ta:{desc:'அமர்ந்தே, எழவேண்டாம். அனைத்து அசைவும் தோள்களுக்கு மேலிருந்தும் கைகளிலிருந்தும்.',cues:['வசனம்: விரல்களால் தொடையில் தட்டுங்கள்','கோரஸ்: கைகளை கிளறுவது போல் வட்டமிடுங்கள்','பாலம்: மெல்ல-மெல்ல-சத்தமாக கைதட்டுங்கள்']}
+    },
+    'Immobile+Partner':{
+      zh:{desc:'两人并排坐。伙伴轻轻将手放在老人手上，引导搅拌动作。',cues:['诗句：握手共同摇摆','副歌：一起引导搅拌','桥段：合拍时握紧双手']},
+      ms:{desc:'Dua orang duduk bersama. Rakan meletakkan tangan di atas tangan warga emas untuk membimbing gerakan mengacau dengan lembut.',cues:['Bait: pegang tangan dan berayun bersama','Korus: mengacau bersama dengan bimbingan','Jambatan: genggam tangan mengikut detik']},
+      ta:{desc:'இருவரும் அமர்ந்திருங்கள். துணை மெதுவாக மூத்தோர் கையை வழிநடத்தி கிளறும் அசைவை செய்யட்டும்.',cues:['வசனம்: கையை பிடித்து சேர்ந்து அசையுங்கள்','கோரஸ்: சேர்ந்து வழிநடத்தலுடன் கிளறுங்கள்','பாலம்: தாளத்தில் கையை இறுக்கி பிடியுங்கள்']}
+    }
+  },
+  4:{ // I Love My Kampong
+    'Mobile Solo':{
+      zh:{desc:'慢慢绕圈走——仿佛回到甘榜。副歌时轻柔地摇摆。',cues:['诗句：慢慢绕圈走，四处张望','副歌：双手放在心口，摇摆','桥段：指向天空（芒果树）']},
+      ms:{desc:'Berjalan perlahan dalam bulatan — seolah-olah kembali ke kampong. Berayun lembut semasa korus.',cues:['Bait: berjalan perlahan dalam bulatan, pandang sekeliling','Korus: tangan di dada, berayun','Jambatan: tunjuk ke langit (pokok mangga)']},
+      ta:{desc:'மெதுவாக வட்டமிட்டு நடையுங்கள் — கிராமத்திற்கு திரும்புவது போல். கோரஸில் மெதுவாக ஆட்டுங்கள்.',cues:['வசனம்: மெதுவாக வட்டமிட்டு நடந்து சுற்றி பாருங்கள்','கோரஸ்: கைகளை இதயத்தில் வையுங்கள், ஆட்டுங்கள்','பாலம்: வானை நோக்கி சுட்டி காட்டுங்கள் (மாமரம்)']}
+    },
+    'Mobile+Partner':{
+      zh:{desc:'老人和孙子手牵手慢慢走，仿佛带他们回家。',cues:['诗句：慢慢一起走','副歌：停下来，面对面，双手放在心口','桥段：两人一起指向上方']},
+      ms:{desc:'Warga emas berjalan bersama cucu bergandingan tangan, seolah-olah membawa mereka pulang.',cues:['Bait: berjalan bersama perlahan','Korus: berhenti dan hadap antara satu sama lain, tangan di dada','Jambatan: kedua-duanya tunjuk ke atas bersama']},
+      ta:{desc:'மூத்தோர் பேரனுடன் கை பிடித்து மெதுவாக நடைபோடுங்கள், வீட்டிற்கு அழைத்து செல்வது போல்.',cues:['வசனம்: சேர்ந்து மெதுவாக நடையுங்கள்','கோரஸ்: நிறுத்தி நேருக்கு நேர் நில்லுங்கள், கைகளை இதயத்தில் வையுங்கள்','பாலம்: இருவரும் சேர்ந்து மேலே சுட்டி காட்டுங்கள்']}
+    },
+    'Immobile Solo':{
+      zh:{desc:'全程坐着。诗句时可以闭眼，想象甘榜的样子。',cues:['诗句：闭眼，轻轻地点头','副歌：双手放在心口','桥段：双手抬起，手指轻轻摇动像树叶']},
+      ms:{desc:'Semua duduk. Mata boleh ditutup semasa bait untuk membayangkan kampong.',cues:['Bait: tutup mata, angguk kepala lembut','Korus: tangan di dada','Jambatan: tangan ke atas, goyangkan jari seperti daun']},
+      ta:{desc:'அனைவரும் அமர்ந்திருங்கள். வசனங்களில் கண்களை மூடி கிராமத்தை கற்பனை செய்யலாம்.',cues:['வசனம்: கண்களை மூடி தலையை மெதுவாக ஆட்டுங்கள்','கோரஸ்: கைகளை இதயத்தில் வையுங்கள்','பாலம்: கைகளை உயர்த்தி விரல்களை இலைகளைப் போல் அசையுங்கள்']}
+    },
+    'Immobile+Partner':{
+      zh:{desc:'孙子坐在老人旁边，整首歌都握着手。',cues:['诗句：轻轻地合拍握手','副歌：双手一起放在心口','桥段：一起向上伸展']},
+      ms:{desc:'Cucu duduk di sebelah warga emas, pegang tangan sepanjang lagu.',cues:['Bait: genggam tangan lembut mengikut irama','Korus: tangan bersama di dada','Jambatan: jejaki ke atas bersama']},
+      ta:{desc:'பேரன்/பேத்தி மூத்தோர் அருகில் அமர்ந்து முழு பாடலும் கையை பிடித்திருக்கட்டும்.',cues:['வசனம்: தாளத்தில் மெதுவாக கையை இறுக்குங்கள்','கோரஸ்: கைகளை சேர்த்து இதயத்தில் வையுங்கள்','பாலம்: சேர்ந்து மேலே நீட்டுங்கள்']}
+    }
+  },
+  7:{ // Sepak Takraw
+    'Mobile Solo':{
+      zh:{desc:'站立。左右交替用力踢腿。双臂抬高，像藤球飞过球网。',cues:['诗句：交替侧踢（可扶椅子）','副歌：双臂高高弧形挥动，像球飞翔','桥段：跳起（或椅子弹跳）合拍']},
+      ms:{desc:'Berdiri. Tendangan sisi bertenaga bergiliran kiri dan kanan. Angkat tangan tinggi seperti bola rotan terbang melepasi jaring.',cues:['Bait: tendangan sisi bergiliran (pegang kerusi jika perlu)','Korus: tangan melengkung tinggi seperti bola','Jambatan: lompat (atau melantun di kerusi) mengikut irama']},
+      ta:{desc:'நில்லுங்கள். இடது மற்றும் வலது புறமாக மாறி மாறி உக்கிரமாக உதையுங்கள். கைகளை வலையை கடக்கும் பந்து போல் உயர்த்துங்கள்.',cues:['வசனம்: மாறி மாறி பக்கவாட்டில் உதையுங்கள் (தேவைப்பட்டால் நாற்காலியை பிடிக்கவும்)','கோரஸ்: கைகளை பந்து போல் வளைவாக உயர்த்துங்கள்','பாலம்: தாளத்தில் தாவுங்கள் (அல்லது நாற்காலியில் குதியுங்கள்)']}
+    },
+    'Mobile+Partner':{
+      zh:{desc:'伙伴面对面站立。互相向对方的空间踢腿（不接触）。每次副歌时一起庆祝。',cues:['诗句：镜像踢腿','副歌：同时双臂弧形挥动','桥段：胸撞或击掌']},
+      ms:{desc:'Rakan-rakan berhadapan. Tendang ke arah ruang antara satu sama lain (tidak sentuh). Raikan bersama setiap korus.',cues:['Bait: cerminkan tendangan','Korus: tangan melengkung serentak','Jambatan: sentuh dada atau tepuk tangan tinggi']},
+      ta:{desc:'துணைகள் நேருக்கு நேர் நில்லுங்கள். ஒருவர் மற்றவரின் இடத்தை நோக்கி (தொடாமல்) உதையுங்கள். ஒவ்வொரு கோரஸிலும் சேர்ந்து கொண்டாடுங்கள்.',cues:['வசனம்: பிரதிபலிக்கும் உதைகள்','கோரஸ்: கைகளை ஒரே நேரத்தில் வளைவாக உயர்த்துங்கள்','பாலம்: நெஞ்சு தட்டல் அல்லது கைதட்டல்']}
+    },
+    'Immobile Solo':{
+      zh:{desc:'坐着，双腿交替向前踢。副歌时双臂做弧形动作。',cues:['诗句：坐着腿部交替踢','副歌：双臂向上挥动','桥段：双拳向上挥动']},
+      ms:{desc:'Duduk, tendangan kaki ke hadapan bergiliran. Tangan membuat gerakan melengkung semasa korus.',cues:['Bait: tendangan kaki duduk bergiliran','Korus: tangan menyapu ke atas','Jambatan: penumbuk ke atas']},
+      ta:{desc:'அமர்ந்து, மாறி மாறி கால்களை முன்னோக்கி உதையுங்கள். கோரஸில் கைகளால் வளைவு உருவாக்குங்கள்.',cues:['வசனம்: அமர்ந்தே கால்களை மாறி மாறி உதையுங்கள்','கோரஸ்: கைகளை மேல்நோக்கி துடையுங்கள்','பாலம்: மேல்நோக்கி முஷ்டி உயர்த்துங்கள்']}
+    },
+    'Immobile+Partner':{
+      zh:{desc:'孙子坐在老人脚边。孙子做踢腿动作，老人做弧形手臂动作。',cues:['诗句：老人鼓掌，孩子踢腿','副歌：两人一起弧形挥臂','桥段：孩子加油，老人举拳']},
+      ms:{desc:'Cucu duduk di kaki warga emas. Cucu buat tendangan; warga emas buat gerakan tangan melengkung.',cues:['Bait: warga emas tepuk tangan, kanak-kanak menendang','Korus: kedua-duanya melengkungkan tangan bersama','Jambatan: kanak-kanak memberi semangat, warga emas menumbuk']},
+      ta:{desc:'பேரன்/பேத்தி மூத்தோரின் காலடியில் அமருக்கட்டும். பேரன்/பேத்தி உதைக்கட்டும்; மூத்தோர் கை வளைவு செய்யட்டும்.',cues:['வசனம்: மூத்தோர் கைதட்டட்டும், குழந்தை உதைக்கட்டும்','கோரஸ்: இருவரும் சேர்ந்து கைகளை வளைவாக உயர்த்துங்கள்','பாலம்: குழந்தை ஆர்ப்பரிக்கட்டும், மூத்தோர் முஷ்டி உயர்த்தட்டும்']}
+    }
+  },
+  10:{ // Together We Can Lah!
+    'Mobile Solo':{
+      zh:{desc:'原地踏步，然后在副歌时将双臂向两侧张开（拥抱社区）。',cues:['诗句：原地踏步，四处张望','副歌：双臂大张，微笑','桥段：双拳举起——"我们可以！"']},
+      ms:{desc:'Berjalan di tempat, kemudian rentangkan tangan ke sisi (merangkul komuniti) semasa korus.',cues:['Bait: berjalan di tempat, pandang sekeliling','Korus: tangan terbuka luas, senyum','Jambatan: kedua-dua penumbuk ke atas — "Boleh!"']},
+      ta:{desc:'இடத்திலேயே நடைபோடுங்கள், பிறகு கோரஸில் இரு கைகளையும் பக்கவாட்டில் விரியுங்கள் (சமூகத்தை தழுவுவது போல்).',cues:['வசனம்: இடத்திலேயே நடை போடுங்கள், சுற்றி பாருங்கள்','கோரஸ்: கைகளை அகலமாக விரியுங்கள், புன்னகையுங்கள்','பாலம்: இரு முஷ்டிகளையும் உயர்த்துங்கள் — "நாங்கள் செய்வோம்!"']}
+    },
+    'Mobile+Partner':{
+      zh:{desc:'手挽手或手牵手绕圈走。张开双臂，欢迎更多人。',cues:['诗句：手挽手绕圈走','副歌：面向外张开双臂','桥段：大家一起举拳']},
+      ms:{desc:'Bergandingan atau bergandingan tangan. Berjalan dalam bulatan bersama. Buka tangan untuk merangkul lebih ramai orang.',cues:['Bait: berjalan dalam bulatan bergandingan','Korus: hadap keluar, tangan terbuka','Jambatan: semua angkat penumbuk bersama']},
+      ta:{desc:'கைகளை தழுவி அல்லது பிடித்து வட்டமிட்டு நடையுங்கள். கைகளை திறந்து மேலும் பேரை வரவேற்கவும்.',cues:['வசனம்: தழுவி வட்டமிட்டு நடையுங்கள்','கோரஸ்: வெளியே திரும்பி கைகளை திறக்கவும்','பாலம்: அனைவரும் சேர்ந்து முஷ்டி உயர்த்துங்கள்']}
+    },
+    'Immobile Solo':{
+      zh:{desc:'坐着摇摆，双臂左右摆动。副歌时双臂大张。',cues:['诗句：左右摇摆双臂','副歌：双臂大开','桥段：双拳向天空挥动']},
+      ms:{desc:'Duduk berayun, tangan berayun dari sisi ke sisi. Buka tangan lebar semasa korus.',cues:['Bait: ayun tangan dari sisi ke sisi','Korus: kedua-dua tangan terbuka luas','Jambatan: penumbuk ke langit']},
+      ta:{desc:'அமர்ந்து ஆட்டுங்கள், கைகளை பக்கவாட்டில் அசையுங்கள். கோரஸில் கைகளை அகலமாக விரியுங்கள்.',cues:['வசனம்: கைகளை பக்கவாட்டில் அசையுங்கள்','கோரஸ்: இரு கைகளையும் அகலமாக திறக்கவும்','பாலம்: வானை நோக்கி முஷ்டி உயர்த்துங்கள்']}
+    },
+    'Immobile+Partner':{
+      zh:{desc:'所有人坐着手牵手。一起像一个整体摇摆。',cues:['诗句：握手一起摇摆','副歌：双臂一起向外摆','桥段：握紧双手，欢呼']},
+      ms:{desc:'Semua bergandingan tangan sambil duduk. Berayun bersama sebagai satu kumpulan yang bersatu.',cues:['Bait: berayun sambil berpegang tangan','Korus: ayun tangan ke luar bersama','Jambatan: genggam tangan dan sorak']},
+      ta:{desc:'அனைவரும் கை பிடித்து அமர்ந்திருங்கள். ஒரே இணைக்கப்பட்ட குழுவாக ஒன்றாக ஆட்டுங்கள்.',cues:['வசனம்: கை பிடித்து ஆட்டுங்கள்','கோரஸ்: கைகளை வெளியே சேர்ந்து அசையுங்கள்','பாலம்: கைகளை இறுக்கி கொண்டாடுங்கள்']}
+    }
+  }
+};
 
-            if (pin !== expected) {
-                showError('Invalid access code for the selected role.');
-                return;
-            }
+// ═══════════════════════════════════════════════════════
+//  CRAFT TRANSLATIONS (steps, connectionMoment, elderlyAdaptation)
+// ═══════════════════════════════════════════════════════
+const CRAFT_TRANS={
+  101:{
+    zh:{steps:['用白蜡笔在卡纸上画咖啡店图案：咖椰吐司、鸡蛋、咖啡杯。用力压！','将水彩颜料稀释（颜料:水=1:3）。','将水彩涂刷在整张纸上——蜡笔图案会神奇地显现出来。','晾干后再涂几层颜色。','过胶后即成可使用的餐垫。'],connectionMoment:'问祖父母：您在咖啡店里最常点什么？您有固定的"老三样"吗？',elderlyAdaptation:'使用粗画笔，调色盘限2-3种颜色，全程坐着完成。'},
+    ms:{steps:['Lukis pemandangan kedai kopi dengan krayon putih di atas kertas: kaya toast, telur, cawan. Tekan kuat!','Bancuh cat air cair (1:3 cat:air).','Sapukan cat air ke seluruh kertas — krayon akan kelihatan secara ajaib.','Biarkan kering. Tambah lebih banyak lapisan warna.','Laminatkan untuk dijadikan alas meja yang boleh digunakan.'],connectionMoment:'Tanya datuk/nenek: Apa yang selalu anda pesan di kedai kopi? Apa "biasa" anda?',elderlyAdaptation:'Gunakan berus tebal. Hadkan palet kepada 2-3 warna. Duduk sepanjang masa.'},
+    ta:{steps:['வெள்ளை மெழுகு வர்ணத்தால் கார்ட்ஸ்டாக்கில் கோபிட்டியம் காட்சிகளை வரையுங்கள்: காயா டோஸ்ட், முட்டைகள், கப்கள். கடினமாக அழுத்துங்கள்!','நீர்மயமான வாட்டர்கலர் பெயிண்ட் கலக்கவும் (1:3 பெயிண்ட்:தண்ணீர்).','முழு காகிதத்திலும் பெயிண்ட் தடவுங்கள் — மெழுகு வரைபடம் மந்திரமாக தெரியும்.','காய விடுங்கள். மேலும் வண்ண அடுக்குகள் சேர்க்கவும்.','பயன்படுத்தக்கூடிய இட விரிப்பாக செய்ய லேமினேட் செய்யுங்கள்.'],connectionMoment:'தாத்தா/பாட்டியிடம் கேளுங்கள்: கோபிட்டியத்தில் நீங்கள் எப்போதும் என்ன ஆர்டர் செய்வீர்கள்? உங்கள் "வழக்கமான" என்ன?',elderlyAdaptation:'தடிமனான தூரிகைகளை பயன்படுத்துங்கள். 2-3 வண்ணங்களுக்கு மட்டும் வையுங்கள். முழு நேரமும் அமர்ந்திருக்கட்டும்.'}
+  },
+  102:{
+    zh:{steps:['将鞋盒横放——这就是您的小贩摊位。','裁剪布料或卡纸做遮阳棚，粘贴在顶部。','用卡纸和工艺棒制作摊位柜台。','用黏土或揉捏的纸巾制作迷你"食物"。','写上摊位名——由祖父母建议他们记得的真实小贩名称。'],connectionMoment:'祖父母以他们记忆中的真实小贩命名摊位。孩子们问："那位伯伯/阿姨长什么样子？"',elderlyAdaptation:'祖父母专注于装饰和讲述——孩子们负责剪裁和建造。'},
+    ms:{steps:['Letakkan kotak kasut mengiring — ini adalah gerai penjaja anda.','Potong kain atau kad untuk bumbung dan tampalkan di atas.','Buat kaunter dari kad dan kayu kraf.','Cipta "makanan" kecil dari tanah liat atau tisu yang digulung.','Tulis nama gerai — datuk/nenek cadangkan nama penjaja sebenar yang mereka ingati.'],connectionMoment:'Datuk/nenek menamakan gerai sempena penjaja sebenar yang diingati. Kanak-kanak tanya: "Macam mana rupa pakcik/makcik tu?"',elderlyAdaptation:'Datuk/nenek fokus pada hiasan dan bercerita — kanak-kanak uruskan kerja potong dan bina.'},
+    ta:{steps:['ஷூ பெட்டியை ஒரு பக்கம் திருப்புங்கள் — இதுவே உங்கள் ஹாக்கர் ஸ்டால்.','துணி அல்லது அட்டையில் கண்ணோப்பி வெட்டி மேலே ஒட்டுங்கள்.','அட்டை மற்றும் கைவினை குச்சிகளால் கவுண்டர் செய்யுங்கள்.','களிமண் அல்லது திரட்டிய டிஷ்யூ காகிதத்தால் சிறிய "உணவு" செய்யுங்கள்.','ஸ்டால் பெயர் எழுதுங்கள் — தாத்தா/பாட்டி நினைவிலுள்ள உண்மையான ஹாக்கரின் பெயரை பரிந்துரைக்கட்டும்.'],connectionMoment:'தாத்தா/பாட்டி நினைவிலுள்ள உண்மையான ஹாக்கரின் பெயரை ஸ்டாலுக்கு வைக்கட்டும். குழந்தைகள் கேளுங்கள்: "அந்த ஐயா/அம்மா எப்படி இருப்பார்கள்?"',elderlyAdaptation:'தாத்தா/பாட்டி அலங்கரிப்பு மற்றும் கதை சொல்வதில் கவனம் செலுத்தட்டும் — குழந்தைகள் வெட்டி கட்டுவார்கள்.'}
+  },
+  103:{
+    zh:{steps:['一起翻阅食物图片——祖父母指出他们喜爱的食物。','剪出最爱的食物（孩子剪，祖父母选）。','在A3纸上排列成"我家的食物全家福"。','粘贴后加上标签：奶奶爱……我爱……','一起裱框。'],connectionMoment:'对比：祖父母小时候吃的食物与孙辈今天吃的。有什么相同？有什么是新的？',elderlyAdaptation:'祖父母可以撕（不用剪）图片——撕下来同样有艺术效果，也更简单。'},
+    ms:{steps:['Telusuri gambar makanan bersama — datuk/nenek tunjuk makanan yang mereka suka.','Gunting makanan kegemaran (kanak-kanak gunting; datuk/nenek pilih).','Susun di atas kertas A3 menjadi "Potret Makanan Keluarga Saya."','Tampal dan tambah label: Nenek suka..., Saya suka...','Bingkaikan bersama.'],connectionMoment:'Bandingkan: makanan yang datuk/nenek makan semasa kecil vs apa yang cucu makan hari ini. Apa yang sama? Apa yang baru?',elderlyAdaptation:'Datuk/nenek boleh koyakkan (bukan gunting) gambar — mengoyak lebih mudah dan masih sah secara artistik.'},
+    ta:{steps:['சேர்ந்து உணவு படங்களை பார்வையிடுங்கள் — தாத்தா/பாட்டி விரும்பும் உணவுகளை சுட்டி காட்டட்டும்.','பிடித்த உணவுகளை வெட்டுங்கள் (குழந்தைகள் வெட்டட்டும்; தாத்தா/பாட்டி தேர்வு செய்யட்டும்).','A3 காகிதத்தில் "என் குடும்பத்தின் உணவு சித்திரம்" என வடிவமைக்கவும்.','ஒட்டி லேபில்கள் சேர்க்கவும்: பாட்டி விரும்புவது..., நான் விரும்புவது...','சேர்ந்து சட்டகம் போடுங்கள்.'],connectionMoment:'ஒப்பிடுங்கள்: தாத்தா/பாட்டி சிறுவயதில் சாப்பிட்டது vs பேரன்/பேத்தி இன்று சாப்பிடுவது. என்ன ஒரே மாதிரி? என்ன புதியது?',elderlyAdaptation:'தாத்தா/பாட்டி படங்களை கிழிக்கலாம் (வெட்டாமல்) — கிழிப்பது எளிது மற்றும் கலைத்துவமாகவும் சரியே.'}
+  },
+  104:{
+    zh:{steps:['用手指或画笔将颜料涂在班兰叶上。','用力将叶子压在纸上，保持5秒。','小心揭开，查看图案。','用不同颜色重复，叠加层次。','讨论：你闻到了什么？上次用班兰叶是什么时候？'],connectionMoment:'班兰蛋糕、糕点、椰浆饭里都有班兰……祖父母分享他们最爱哪道用班兰的菜肴。',elderlyAdaptation:'老人握住叶子，孩子负责按压——合作创作，共同完成。'},
+    ms:{steps:['Sapukan cat ke daun pandan menggunakan jari atau berus.','Tekan daun kuat ke atas kertas, tahan 5 saat.','Kupas dengan berhati-hati untuk mendedahkan corak.','Ulang dengan warna berbeza. Lapisi untuk kedalaman.','Bincangkan: apa yang anda hidu? Bila kali terakhir guna pandan?'],connectionMoment:'Pandan ada dalam kek pandan, kuih, nasi lemak... datuk/nenek kongsikan hidangan yang mereka kaitkan dengan wangi ini.',elderlyAdaptation:'Warga emas boleh pegang daun sementara kanak-kanak menekan — usaha bersama, ciptaan dikongsi.'},
+    ta:{steps:['விரல் அல்லது தூரிகையால் பாண்டன் இலையில் பெயிண்ட் தடவுங்கள்.','இலையை காகிதத்தில் இறுக்கமாக அழுத்துங்கள், 5 நொடி வைத்திருங்கள்.','கவனமாக உரித்து வடிவத்தை வெளிப்படுத்துங்கள்.','வெவ்வேறு வண்ணங்களால் மீண்டும் செய்யுங்கள். ஆழத்திற்கு அடுக்குகள் சேர்க்கவும்.','விவாதியுங்கள்: என்ன வாசனை வருகிறது? கடைசியாக பாண்டன் பயன்படுத்தியது எப்போது?'],connectionMoment:'பாண்டன் கேக், குவே, நாசி லெமாக்கில் பாண்டன் இருக்கும்... தாத்தா/பாட்டி இந்த வாசனையை எந்த உணவுடன் இணைக்கிறார்கள் என்று பகிரட்டும்.',elderlyAdaptation:'மூத்தோர் இலையை பிடிக்கட்டும், குழந்தை அழுத்தட்டும் — கூட்டு முயற்சி, பகிர்ந்த படைப்பு.'}
+  },
+  105:{
+    zh:{steps:['将茶包在水中浸泡。将A4纸揉皱并沾湿，展平晾干（制造古旧感）。','祖父母凭记忆口述一道秘传家常菜谱。','孩子工整地写下菜谱（祖父母指导）。','用水彩铅笔为主要食材配图。','卷成卷轴，用丝带绑好。'],connectionMoment:'祖父母是智慧的守护者。这份菜谱也许从未被书写记录过。',elderlyAdaptation:'祖父母口述，孩子书写。如祖父母想亲自写，提供大握柄毛笔。'},
+    ms:{steps:['Rendam beg teh dalam air. Ramas dan basahkan kertas A4, kemudian ratakan untuk kering (memberi rupa usang).','Datuk/nenek diktakan satu resipi keluarga rahsia dari ingatan.','Kanak-kanak tulis resipi dengan tulisan kemas (datuk/nenek bimbing).','Lukiskan bahan utama dengan pensel warna air.','Gulung menjadi skrol dan ikat dengan reben.'],connectionMoment:'Datuk/nenek adalah penjaga ilmu. Resipi ini mungkin tidak pernah ditulis sebelum ini.',elderlyAdaptation:'Datuk/nenek bercakap; kanak-kanak menulis. Jika datuk/nenek ingin menulis, sediakan pen berus pemegang besar.'},
+    ta:{steps:['தேநீர் பையை தண்ணீரில் ஊறவிடுங்கள். A4 காகிதத்தை நனைத்து சுருக்கி தட்டையாக காயவிடுங்கள் (பழைய தோற்றம் தருவதற்கு).','தாத்தா/பாட்டி நினைவிலிருந்து ஒரு ரகசிய குடும்ப சமையல் குறிப்பை சொல்லட்டும்.','குழந்தை சமையல் குறிப்பை ஒழுங்காக எழுதட்டும் (தாத்தா/பாட்டி வழிகாட்டட்டும்).','முக்கிய பொருட்களை வாட்டர்கலர் பென்சில்களால் வரையுங்கள்.','சுருட்டி ரிப்பன் கட்டுங்கள்.'],connectionMoment:'தாத்தா/பாட்டி அறிவின் பாதுகாவலர். இந்த சமையல் குறிப்பு இதுவரை எழுதப்பட்டிராமல் இருக்கலாம்.',elderlyAdaptation:'தாத்தா/பாட்டி சொல்லட்டும்; குழந்தை எழுதட்டும். தாத்தா/பாட்டி எழுத விரும்பினால், பெரிய பிடியுள்ள தூரிகை பேனா வழங்கவும்.'}
+  },
+  201:{
+    zh:{steps:['将纸平铺在桌上或地板上。','祖父母描述他们童年的甘榜：水井、大树、邻居的家。','家人边听祖父母讲边画——每人画一个元素。','用祖父母记得的名字给所有地物标注。','加上指北针和标题："外婆的甘榜"/"外公的甘榜"。'],connectionMoment:'问：您在甘榜里最好的朋友是谁？你们在哪里玩？您的甘榜后来怎么了？',elderlyAdaptation:'祖父母可以画一个简单的图形（画个圆表示水井），其余由孩子们填充。'},
+    ms:{steps:['Bentangkan kertas rata di atas meja atau lantai.','Datuk/nenek huraikan kampong zaman kecil mereka: perigi, pokok besar, rumah jiran.','Keluarga melukis semasa datuk/nenek bercakap — setiap orang lukis satu elemen.','Labelkan semua ciri dengan nama yang datuk/nenek ingat.','Tambah mawar angin dan tajuk: "Kampong Nenek/Datuk."'],connectionMoment:'Tanya: siapa kawan baik anda di kampong? Di mana anda bermain? Apa yang berlaku kepada kampong anda?',elderlyAdaptation:'Datuk/nenek boleh lukis satu bentuk mudah (bulatan untuk perigi) sementara kanak-kanak melengkapkan yang lain.'},
+    ta:{steps:['காகிதத்தை மேசை அல்லது தரையில் தட்டையாக வையுங்கள்.','தாத்தா/பாட்டி தங்கள் சிறுவயது கிராமத்தை விவரிக்கட்டும்: கிணறு, பெரிய மரம், அண்டை வீட்டார் வீடு.','தாத்தா/பாட்டி சொல்வதை கேட்டபடி குடும்பத்தினர் வரைவார்கள் — ஒவ்வொருவரும் ஒரு அம்சம் வரைவார்கள்.','தாத்தா/பாட்டி நினைவிலுள்ள பெயர்களால் அனைத்து இடங்களையும் லேபில் செய்யுங்கள்.','திசைகாட்டி மற்றும் தலைப்பு சேர்க்கவும்: "பாட்டியின்/தாத்தாவின் கிராமம்."'],connectionMoment:'கேளுங்கள்: கிராமத்தில் உங்கள் நெருங்கிய நண்பர் யார்? எங்கே விளையாடினீர்கள்? உங்கள் கிராமம் என்னவாயிற்று?',elderlyAdaptation:'தாத்தா/பாட்டி ஒரு எளிய வடிவம் வரைக்கலாம் (கிணற்றிற்கு ஒரு வட்டம்) மற்றதை குழந்தைகள் நிரப்பட்டும்.'}
+  },
+  202:{
+    zh:{steps:['用铅笔轻轻勾勒一排店屋的轮廓。','用柔和色彩涂墙壁（粉红、黄色、蓝色、绿色）。','添加窗户、百叶窗和五脚基（有盖走廊）。','最后画天空的渲染背景。','祖父母指出哪种颜色最像他们记忆中的店屋。'],connectionMoment:'您的店屋面朝哪条街？底层开的是什么店？楼上住着谁？',elderlyAdaptation:'为老人提供预先描好的轮廓，让他们在里面涂色。专注于色彩，不要求精确。'},
+    ms:{steps:['Lakarkan sebaris rumah kedai dengan pensil secara ringan.','Cat dinding dengan warna pastel (merah jambu, kuning, biru, hijau).','Tambah tingkap, kepak dan "five-foot way" (laluan bumbung).','Cat latar langit terakhir.','Datuk/nenek tunjukkan warna mana yang sepadan dengan rumah kedai yang mereka ingati.'],connectionMoment:'Jalan mana yang dihadap rumah kedai anda? Kedai apa yang ada di bawah? Siapa yang tinggal di atas?',elderlyAdaptation:'Sediakan garisan yang telah dilukis untuk warga emas mewarna. Fokus pada warna, bukan ketepatan.'},
+    ta:{steps:['பென்சிலால் ஒரு வரிசை ஷாப்ஹவுஸ்களை மெதுவாக வரையுங்கள்.','சுவர்களை மென்மையான நிறங்களில் வரையுங்கள் (இளஞ்சிவப்பு, மஞ்சள், நீலம், பச்சை).','ஜன்னல்கள், ஷட்டர்கள் மற்றும் "ஃபைவ்-ஃபுட் வே" சேர்க்கவும்.','இறுதியில் வானை வரையுங்கள்.','தாத்தா/பாட்டி நினைவிலுள்ள ஷாப்ஹவுஸின் நிறம் எது என்று சுட்டி காட்டட்டும்.'],connectionMoment:'உங்கள் ஷாப்ஹவுஸ் எந்த தெருவை நோக்கி இருந்தது? கீழ் தளத்தில் என்ன கடை இருந்தது? மேல் தளத்தில் யார் இருந்தார்கள்?',elderlyAdaptation:'மூத்தோருக்கு முன்கூட்டியே வரையப்பட்ட வரிவடிவங்களை வழங்குங்கள். துல்லியம் வேண்டாம், வண்ணத்தில் கவனம் செலுத்தட்டும்.'}
+  },
+  203:{
+    zh:{steps:['将盒子内部涂绿色（草岸），底部铺蓝色玻璃纸（水面）。','用黏土塑造小蜻蜓、小鱼和青蛙。','用层叠纸板堆砌堤岸。','摆放孩子们在排水沟边玩耍的小人偶。','祖父母审阅最终场景："对，就是那个样子！"'],connectionMoment:'问祖父母：您曾在水沟里抓过什么？当时被允许吗？有没有被骂过？',elderlyAdaptation:'祖父母捏制黏土小动物（轻柔揉捏有助于手部灵活）。'},
+    ms:{steps:['Cat bahagian dalam kotak hijau (tebing berumput) dan lapik tapak dengan selofan biru (air).','Bentukkan capung, ikan, dan katak kecil dari tanah liat.','Bina tebing dengan kad berlapis.','Letakkan patung kanak-kanak bermain di tepi longkang.','Datuk/nenek luluskan pemandangan akhir: "Ya, begitulah rupanya!"'],connectionMoment:'Tanya datuk/nenek: apa yang anda tangkap di longkang? Adakah anda dibenarkan? Adakah anda kena marah?',elderlyAdaptation:'Datuk/nenek uruskan binatang tanah liat (meremas lembut baik untuk ketangkasan tangan).'},
+    ta:{steps:['பெட்டியின் உட்பகுதியை பச்சை நிறம் தடவுங்கள் (புல்தரை கரைகள்) மற்றும் அடிப்பகுதியை நீல செலோபேன் விரிக்கவும்.','களிமண்ணால் சிறிய தாளிகள், மீன்கள் மற்றும் தவளைகளை வடிவமைக்கவும்.','அட்டை அடுக்குகளால் கரைகளை கட்டுங்கள்.','வடிகால் ஓரத்தில் விளையாடும் குழந்தைகளின் சிறு சிலைகளை வையுங்கள்.','தாத்தா/பாட்டி இறுதி காட்சியை அங்கீகரிக்கட்டும்: "ஆமா, அப்படித்தான் இருந்தது!"'],connectionMoment:'தாத்தா/பாட்டியிடம் கேளுங்கள்: லோங்காங்கில் என்ன பிடித்தீர்கள்? அனுமதி இருந்ததா? திட்டு வாங்கினீர்களா?',elderlyAdaptation:'தாத்தா/பாட்டி களிமண் விலங்குகளை கையாளட்டும் (மெதுவாக அழுத்துவது கை சுறுசுறுப்பிற்கு நல்லது).'}
+  },
+  204:{
+    zh:{steps:['将水彩纸打湿，画出夕阳渐变色：黄色到橙色再到深红。','完全晾干。','用黑卡纸剪出新加坡天际线：组屋、清真寺穹顶、棕榈树、寺庙。','将剪影粘贴在夕阳背景上。','用白色颜料或白色凝胶笔加上月亮和星星。'],connectionMoment:'祖父母认出了哪些地标？哪些建筑在他们年轻时还不存在？',elderlyAdaptation:'老人可以完成夕阳水彩背景，孩子负责剪切剪影。'},
+    ms:{steps:['Basahkan kertas warna air dan cat kecerunan matahari terbenam: kuning ke oren ke merah tua.','Biarkan kering sepenuhnya.','Potong garisan langit Singapura dari kad hitam: blok HDB, kubah masjid, pokok palma, kuil.','Tampal siluet ke atas latar belakang matahari terbenam.','Tambah bulan dan bintang dengan cat putih atau pen gel.'],connectionMoment:'Mercu tanda mana yang datuk/nenek kenali? Bangunan mana yang TIDAK wujud semasa mereka muda?',elderlyAdaptation:'Warga emas boleh lakukan latar belakang warna air matahari terbenam sementara kanak-kanak memotong siluet.'},
+    ta:{steps:['வாட்டர்கலர் காகிதத்தை நனைத்து சூரியன் அஸ்தமன சாயல் வரையுங்கள்: மஞ்சளிலிருந்து ஆரஞ்சு, பிறகு ஆழமான சிவப்பிற்கு.','முழுவதுமாக காயவிடுங்கள்.','கருப்பு அட்டையிலிருந்து சிங்கப்பூர் அடிவான விரிவை வெட்டுங்கள்: HDB தொகுதிகள், மசூதி குவிமாடம், பனை மரங்கள், கோயில்.','சூரியன் அஸ்தமன பின்னணியில் சிலுவேட்டை ஒட்டுங்கள்.','வெள்ளை பெயிண்ட் அல்லது ஜெல் பேனாவால் நிலா மற்றும் நட்சத்திரங்கள் சேர்க்கவும்.'],connectionMoment:'தாத்தா/பாட்டி எந்த அடையாளச் சின்னங்களை அடையாளம் காண்கிறார்கள்? அவர்கள் இளமையாக இருந்தபோது இல்லாத கட்டிடங்கள் எவை?',elderlyAdaptation:'மூத்தோர் சூரியன் அஸ்தமன வாட்டர்கலர் பின்னணி செய்யட்டும், குழந்தைகள் சிலுவேட்டை வெட்டட்டும்.'}
+  },
+  205:{
+    zh:{steps:['用扁平黏土板搭建站台。','添加柱子、长椅和屋顶结构。','将工艺棒压入底座作为铁轨。','晾干后上色。','祖父母讲述旧新加坡的交通：三轮车、驳船、电车。'],connectionMoment:'祖父母：地铁出现之前您是怎么出行的？穿越整个岛需要多长时间？',elderlyAdaptation:'祖父母可以为完成的模型上色——即使手部灵活度下降，拿画笔也是做得到的。'},
+    ms:{steps:['Bina platform stesen dari kepingan tanah liat rata.','Tambah tiang, bangku dan struktur bumbung.','Tekan kayu kraf ke tapak sebagai landasan kereta api.','Cat apabila kering.','Datuk/nenek cerita tentang pengangkutan lama Singapura: beca, tongkang, trem.'],connectionMoment:'Datuk/nenek: bagaimana anda bergerak sebelum MRT? Berapa lama untuk merentasi pulau?',elderlyAdaptation:'Datuk/nenek boleh mengecat model siap — kerja berus boleh dilakukan walaupun dengan ketangkasan berkurangan.'},
+    ta:{steps:['தட்டையான களிமண் தட்டுகளால் நிலைய தளத்தை கட்டுங்கள்.','தூண்கள், இருக்கைகள் மற்றும் கூரை கட்டமைப்பு சேர்க்கவும்.','ரயில் பாதையாக கைவினை குச்சிகளை அடிப்பகுதியில் அழுத்துங்கள்.','காய்ந்தவுடன் வண்ணம் தடவுங்கள்.','தாத்தா/பாட்டி பழைய சிங்கப்பூர் போக்குவரத்தைப் பற்றி சொல்லட்டும்: திரிஷா, பம்போட், டிராம்.'],connectionMoment:'தாத்தா/பாட்டி: MRT வருவதற்கு முன் எப்படி சுற்றினீர்கள்? தீவை கடக்க எவ்வளவு நேரம் ஆனது?',elderlyAdaptation:'தாத்தா/பாட்டி முடிக்கப்பட்ட மாதிரியை வண்ணம் தீட்டலாம் — குறைந்த நேர்த்தியிலும் தூரிகை வேலை செய்யலாம்.'}
+  },
+  301:{
+    zh:{steps:['用鲜艳的传统颜色为蛋盒上色。','晾干，再涂第二层。','收集98粒小种子或石子作为棋子。','祖父母演示如何玩Congkak。','一起来一轮！'],connectionMoment:'祖父母教Congkak规则——这是他们的专长。孩子们是学生。',elderlyAdaptation:'老人负责种子的分配（很好的精细动作练习）。孩子们负责上色。'},
+    ms:{steps:['Cat kotak telur dengan warna tradisional yang terang.','Biarkan kering. Tambah lapisan kedua.','Kumpulkan 98 biji atau batu kecil sebagai buah permainan.','Datuk/nenek tunjukkan cara bermain Congkak.','Main satu pusingan bersama!'],connectionMoment:'Datuk/nenek mengajar peraturan Congkak — ini kepakaran mereka. Kanak-kanak adalah pelajar.',elderlyAdaptation:'Warga emas uruskan pengagihan biji (baik untuk motor halus). Kanak-kanak uruskan pengecatan.'},
+    ta:{steps:['முட்டை பெட்டியை பிரகாசமான பாரம்பரிய நிறங்களில் வண்ணம் தீட்டுங்கள்.','காயவிடுங்கள். இரண்டாவது அடுக்கு தடவுங்கள்.','விளையாட்டு காய்களாக 98 சிறிய விதைகள் அல்லது கற்களை சேகரிக்கவும்.','தாத்தா/பாட்டி கொங்காக் எப்படி விளையாடுவது என்று காட்டட்டும்.','சேர்ந்து ஒரு சுற்று விளையாடுங்கள்!'],connectionMoment:'தாத்தா/பாட்டி கொங்காக் விதிகளை கற்பிக்கட்டும் — இது அவர்களின் நிபுணத்துவம். குழந்தைகள் மாணவர்கள்.',elderlyAdaptation:'மூத்தோர் விதை விநியோகத்தை கையாளட்டும் (நல்ல நுண் அசைவு பயிற்சி). குழந்தைகள் வண்ணம் தீட்டட்டும்.'}
+  },
+  302:{
+    zh:{steps:['将陀螺分区涂上不同颜色（先不要混合）。','在报纸上旋转陀螺，看颜色如何融合！','晾干，祖父母旋转陀螺展示正确技巧。','尝试不同颜色组合，观察图案变化。'],connectionMoment:'祖父母：您小时候有陀螺吗？曾和朋友比赛过吗？',elderlyAdaptation:'祖父母负责旋转陀螺（手腕控制，熟悉的动作）。孩子负责上色。'},
+    ms:{steps:['Cat bahagian gasing dengan warna berbeza (jangan campur dahulu).','Putar gasing di atas surat khabar dan tonton warna bergabung!','Biarkan kering. Datuk/nenek putar gasing untuk menunjukkan teknik yang betul.','Cuba kombinasi warna berbeza dan perhatikan corak yang terhasil.'],connectionMoment:'Datuk/nenek: adakah anda ada gasing semasa kecil? Adakah anda bertanding dengan rakan-rakan?',elderlyAdaptation:'Datuk/nenek putar gasing (kawalan pergelangan tangan, gerakan biasa). Kanak-kanak yang mengecat.'},
+    ta:{steps:['கேசிங்கை பிரிவுகளாக வெவ்வேறு நிறங்களில் வண்ணம் தீட்டுங்கள் (இன்னும் கலக்காதீர்கள்).','செய்தித்தாளில் கேசிங்கை சுழற்றி நிறங்கள் இணைவதை பாருங்கள்!','காயவிடுங்கள். தாத்தா/பாட்டி சரியான நுட்பத்தை காட்ட சுழற்றட்டும்.','வெவ்வேறு நிற சேர்க்கைகளை முயற்சிக்கவும் மற்றும் வடிவங்களை கவனிக்கவும்.'],connectionMoment:'தாத்தா/பாட்டி: சிறுவயதில் உங்களுக்கு கேசிங் இருந்ததா? நண்பர்களுடன் போட்டி வைத்தீர்களா?',elderlyAdaptation:'தாத்தா/பாட்டி கேசிங்கை சுழற்றட்டும் (மணிக்கட்டு கட்டுப்பாடு, பழக்கமான அசைவு). குழந்தைகள் வண்ணம் தீட்டட்டும்.'}
+  },
+  303:{
+    zh:{steps:['将两根竹签交叉，在交叉点牢固地绑好。','将纸巾剪成比框架稍大的菱形。','将纸巾粘在框架上，将边缘折叠并粘好。','在交叉点系上细绳。','加上丝带尾巴，用几何图案装饰。'],connectionMoment:'祖父母：您在哪里放过风筝？谁教您的？您有没有进行过风筝大战？',elderlyAdaptation:'祖父母在交叉点系上关键的结——他们的甘榜绳结技艺在这里大放光彩。'},
+    ms:{steps:['Silangkan dua pencucuk buluh dan ikat kuat di persimpangan.','Potong kertas tisu menjadi bentuk berlian sedikit lebih besar dari bingkai.','Tampal kertas tisu ke bingkai, lipat dan tampal tepi.','Ikat tali di titik persimpangan.','Tambah ekor reben. Hiaskan dengan corak geometri.'],connectionMoment:'Datuk/nenek: di mana anda menerbangkan layang-layang? Siapa yang ajar anda? Adakah anda ada pertarungan layang-layang?',elderlyAdaptation:'Datuk/nenek ikat simpul penting di persimpangan — kemahiran mengikat tali kampong mereka bersinar di sini.'},
+    ta:{steps:['இரண்டு மூங்கில் குச்சிகளை குறுக்கிட்டு வையுங்கள், குறுக்கீட்டில் இறுக்கமாக கட்டுங்கள்.','டிஷ்யூ காகிதத்தை சட்டத்தை விட சற்று பெரிய வைர வடிவில் வெட்டுங்கள்.','டிஷ்யூ காகிதத்தை சட்டத்தில் ஒட்டுங்கள், விளிம்புகளை மடித்து ஒட்டுங்கள்.','குறுக்கீட்டில் நூல் கட்டுங்கள்.','ரிப்பன் வால் சேர்க்கவும். வடிவியல் வடிவங்களால் அலங்கரிக்கவும்.'],connectionMoment:'தாத்தா/பாட்டி: எங்கே பட்டம் பறக்க விட்டீர்கள்? யார் கற்பித்தார்கள்? பட்டம் போர் நடந்ததா?',elderlyAdaptation:'தாத்தா/பாட்டி குறுக்கீட்டில் முக்கியமான முடிச்சை கட்டட்டும் — அவர்களின் கிராம கயிறு கட்டும் திறன் இங்கே பளிச்சிடும்.'}
+  },
+  304:{
+    zh:{steps:['将纸袋倒置——折盖就是嘴巴。','创作运动英雄的脸：头发、眼睛、表情。','用布料碎片为木偶穿上运动服。','祖父母和孩子各自制作自己心目中的运动英雄木偶。','表演一段简短的对话：一位老英雄，一位现代英雄。'],connectionMoment:'祖父母的英雄：P.C. Ramlee？李小龙？甘榜里的足球明星？孩子的英雄：当今运动员？',elderlyAdaptation:'大木偶容易操控，祖父母专注于讲故事，而非制作。'},
+    ms:{steps:['Balikkan beg kertas — penutup adalah mulut.','Buat muka wira sukan: rambut, mata, ekspresi.','Pakaikan wayang dengan kostum sukan dari kain buruk.','Datuk/nenek dan kanak-kanak masing-masing buat wayang wira sukan mereka sendiri.','Lakukan dialog wayang singkat: satu wira lama, satu moden.'],connectionMoment:'Wira datuk/nenek: P. C. Ramlee? Bruce Lee? Bintang bola kampong? Wira kanak-kanak: atlet semasa?',elderlyAdaptation:'Wayang besar mudah dikendalikan. Datuk/nenek fokus pada penceritaan bukan pembinaan.'},
+    ta:{steps:['காகித பையை தலைகீழாக திருப்புங்கள் — மூடி வாயாகும்.','விளையாட்டு வீரர் முகம் உருவாக்குங்கள்: முடி, கண்கள், வெளிப்பாடு.','துணி கந்தல்களால் பொம்மைக்கு விளையாட்டு உடை அணிவியுங்கள்.','தாத்தா/பாட்டி மற்றும் குழந்தை ஒவ்வொருவரும் தங்கள் விளையாட்டு வீரர் பொம்மை செய்யட்டும்.','ஒரு சிறிய பொம்மை உரையாடல் நடத்துங்கள்: ஒரு பழைய வீரர், ஒரு நவீன வீரர்.'],connectionMoment:'தாத்தா/பாட்டியின் வீரர்: P. C. Ramlee? புருஸ் லீ? கிராம கால்பந்து நட்சத்திரம்? குழந்தையின் வீரர்: தற்போதைய விளையாட்டு வீரர்?',elderlyAdaptation:'பெரிய பொம்மை கையாள எளிது. தாத்தா/பாட்டி கட்டுமானத்தை விட கதை சொல்வதில் கவனம் செலுத்தட்டும்.'}
+  },
+  305:{
+    zh:{steps:['在黑卡纸上勾勒计分板：队名、得分框、奖杯。','将彩色纸撕成小片（1-2厘米）。','用撕碎的纸片填充计分板设计。','用金色纸巾纸填充奖杯部分。','以家庭"队名"为其命名——一起投票决定！'],connectionMoment:'祖父母和孙辈各自选择一个"队伍"，得分庆祝一项家庭成就。',elderlyAdaptation:'撕纸人人都能做到。祖父母撕纸，孩子贴放并粘合。'},
+    ms:{steps:['Lakarkan papan skor di kad hitam: nama pasukan, petak skor, trofi.','Koyakkan kertas berwarna menjadi kepingan kecil (1-2 cm).','Isi reka bentuk papan skor dengan mozek kertas koyak.','Tambah kertas tisu emas untuk trofi.','Namakan dengan "nama pasukan" keluarga — undi bersama!'],connectionMoment:'Datuk/nenek dan cucu masing-masing pilih "pasukan." Skor meraikan pencapaian keluarga.',elderlyAdaptation:'Mengoyak kertas boleh dilakukan oleh semua. Datuk/nenek koyak sementara kanak-kanak letak dan tampal.'},
+    ta:{steps:['கருப்பு அட்டையில் ஸ்கோர்போர்டை வரையுங்கள்: அணி பெயர்கள், ஸ்கோர் பெட்டிகள், கோப்பை.','வண்ணக் காகிதத்தை சிறிய துண்டுகளாக கிழியுங்கள் (1-2 செமீ).','கிழிக்கப்பட்ட காகித துண்டுகளால் ஸ்கோர்போர்டை நிரப்புங்கள்.','கோப்பைக்கு தங்க நிற டிஷ்யூ காகிதம் சேர்க்கவும்.','குடும்பத்தின் "அணி பெயரால்" தலைப்பிடுங்கள் — சேர்ந்து வாக்களிக்கவும்!'],connectionMoment:'தாத்தா/பாட்டி மற்றும் பேரன்/பேத்தி தலா ஒரு "அணியை" தேர்வு செய்யட்டும். ஸ்கோர் குடும்பத்தின் சாதனையை கொண்டாடுகிறது.',elderlyAdaptation:'காகிதம் கிழிப்பது அனைவரும் செய்யலாம். தாத்தா/பாட்டி கிழிக்கட்டும், குழந்தை வையுங்கள் மற்றும் ஒட்டட்டும்.'}
+  },
+  401:{
+    zh:{steps:['将画布平放在桌上或地板上。','每人将手浸入自己选择的颜色中。','将手印印在画布上——重叠也很美。','在每个手印下方写上名字。','晾干，壁画成为一件家庭艺术品。'],connectionMoment:'按大小排列手印——从婴儿到祖父母。谈谈每双手曾经做过和创造过什么。',elderlyAdaptation:'协助老人用力按压手掌，印好后立即擦手。全程坐着完成。'},
+    ms:{steps:['Bentangkan kanvas rata di atas meja atau lantai.','Setiap orang celupkan tangan ke dalam warna pilihan mereka.','Tekan cap tangan ke atas kanvas — bertindih adalah cantik.','Tulis nama di bawah setiap cap tangan.','Biarkan kering. Mural menjadi karya seni keluarga.'],connectionMoment:'Jajarkan cap tangan mengikut saiz — bayi hingga datuk/nenek. Bincangkan apa yang setiap pasang tangan telah lakukan dan cipta dalam hidup mereka.',elderlyAdaptation:'Bantu warga emas menekan tangan dengan kuat. Lap tangan segera selepas mencetak. Aktiviti duduk.'},
+    ta:{steps:['கான்வாஸை மேசை அல்லது தரையில் தட்டையாக வையுங்கள்.','ஒவ்வொருவரும் தேர்ந்த வண்ணத்தில் கையை தோய்க்கட்டும்.','கான்வாஸில் கை அச்சு இடுங்கள் — ஒன்றின் மீது ஒன்று இடுவது அழகாக இருக்கும்.','ஒவ்வொரு கை அச்சின் கீழும் பெயர்கள் எழுதுங்கள்.','காயவிடுங்கள். சுவரோவியம் குடும்ப கலைப்படைப்பாகிறது.'],connectionMoment:'கை அச்சுகளை அளவின்படி வரிசைப்படுத்துங்கள் — குழந்தை முதல் தாத்தா/பாட்டி வரை. ஒவ்வொரு ஜோடி கைகளும் வாழ்வில் என்ன செய்தன என்று பேசுங்கள்.',elderlyAdaptation:'மூத்தோர் கையை இறுக்கமாக அழுத்த உதவுங்கள். அச்சிட்டவுடன் கையை உடனே துடையுங்கள். அமர்ந்தே செய்யும் செயல்பாடு.'}
+  },
+  402:{
+    zh:{steps:['孩子在布料方块上画出代表"互帮互助"的图案。','祖父母用平针或回针绣出图案轮廓。','用布料颜料或更多绣线填充。','如有多个家庭，将所有方块拼成群体拼布。','每个家庭保留自己的方块作为纪念。'],connectionMoment:'祖父母教孩子一种针法——传承技艺。问：谁教您缝纫的？',elderlyAdaptation:'使用大孔绣花针和粗绣线，方便穿针。'},
+    ms:{steps:['Kanak-kanak lukis reka bentuk di atas kain yang menggambarkan "tolong-menolong."','Datuk/nenek gariskan reka bentuk dengan jahitan lari atau jahitan balik.','Isi dengan cat kain atau jahitan lebih.','Jika ada keluarga berbilang: sambungkan semua petak menjadi kuilt kumpulan.','Setiap keluarga simpan petak mereka sebagai kenang-kenangan.'],connectionMoment:'Datuk/nenek ajar kanak-kanak satu jahitan — mewarisi kemahiran. Tanya: siapa yang ajar anda menjahit?',elderlyAdaptation:'Gunakan jarum mata besar dan benang sulaman tebal untuk memudahkan benang dimasukkan.'},
+    ta:{steps:['குழந்தை துணி சதுரத்தில் "ஒருவருக்கொருவர் உதவுவது" என்பதை குறிக்கும் வடிவம் வரைக்கட்டும்.','தாத்தா/பாட்டி ஓடும் தையல் அல்லது பின்னோக்கி தையலில் வடிவத்தை வரையட்டும்.','துணி வண்ணம் அல்லது மேலும் தையல்களால் நிரப்புங்கள்.','பல குடும்பங்கள் இருந்தால்: அனைத்து சதுரங்களையும் ஒரு குழு கம்பளமாக இணைக்கவும்.','ஒவ்வொரு குடும்பமும் தங்கள் சதுரத்தை நினைவுப் பொருளாக வைத்துக்கொள்ளட்டும்.'],connectionMoment:'தாத்தா/பாட்டி குழந்தைக்கு ஒரு தையல் கற்பிக்கட்டும் — திறனை அடுத்த தலைமுறைக்கு கடத்தட்டும். கேளுங்கள்: உங்களுக்கு தையல் கற்பித்தது யார்?',elderlyAdaptation:'பெரிய கண்களுள்ள ஊசிகள் மற்றும் தடிமனான கேனா நூல் பயன்படுத்துங்கள்.'}
+  },
+  403:{
+    zh:{steps:['一起用贴纸和和纸胶带装饰瓶子。','每人在纸条上写下或画出一段与家人的珍贵记忆。','将每张纸条卷起来放进瓶子里。','在艰难的日子里，取出一张纸条一起大声朗读。','用丝带封好瓶子。'],connectionMoment:'现在就大声朗读几张纸条。祖父母的记忆与孙辈的记忆并排。',elderlyAdaptation:'用画代替写，预先裁好纸条，使用大握柄笔或马克笔。'},
+    ms:{steps:['Hiaskan balang bersama dengan pelekat dan pita washi.','Setiap orang tulis atau lukis satu kenangan berharga bersama keluarga di atas jalur kertas.','Gulung setiap jalur dan letakkan di dalam balang.','Pada hari yang susah, ambil satu jalur dan baca kuat-kuat bersama.','Meteraikan balang dengan reben.'],connectionMoment:'Baca beberapa jalur kuat-kuat sekarang. Kenangan datuk/nenek dan kenangan cucu bersebelahan.',elderlyAdaptation:'Lukis bukannya tulis. Jalur yang telah dipotong. Pen atau marker bergagang besar.'},
+    ta:{steps:['பாட்டிலை சேர்ந்து ஸ்டிக்கர் மற்றும் வாஷி டேப்பால் அலங்கரிக்கவும்.','ஒவ்வொருவரும் குடும்பத்துடன் ஒரு விலைமதிப்பற்ற நினைவை காகித துண்டில் எழுதட்டும் அல்லது வரைக்கட்டும்.','ஒவ்வொரு துண்டையும் சுருட்டி பாட்டிலில் வையுங்கள்.','கஷ்டமான நாளில், ஒரு துண்டை எடுத்து சேர்ந்து சத்தமாக படியுங்கள்.','ரிப்பன் கொண்டு பாட்டிலை மூடுங்கள்.'],connectionMoment:'இப்போதே சில துண்டுகளை சத்தமாக படியுங்கள். தாத்தா/பாட்டியின் நினைவும் பேரன்/பேத்தியின் நினைவும் பக்கம் பக்கமாக.',elderlyAdaptation:'எழுதுவதற்கு பதிலாக வரையுங்கள். முன்கூட்டியே துண்டுகளை வெட்டுங்கள். பெரிய பிடியுள்ள பேனா அல்லது மார்க்கர் பயன்படுத்துங்கள்.'}
+  },
+  404:{
+    zh:{steps:['在纸的全长上画一条横线。','标注年代：1950年、1960年、1970年……直到2026年。','祖父母分享重要人生事件——家人在时间线上补充。','孩子在每个事件旁边画插图。','如有家庭照片，可加上。'],connectionMoment:'祖父母出生时 vs 孙辈出生时——两者之间发生了哪些世界大事？',elderlyAdaptation:'祖父母坐着口述，孩子担任插画师和记录者。'},
+    ms:{steps:['Lukis garisan mendatar merentasi keseluruhan panjang kertas.','Tandakan dekad: 1950, 1960, 1970... sehingga 2026.','Datuk/nenek kongsikan peristiwa penting dalam hidup — keluarga tambahkan pada garis masa.','Kanak-kanak lukis ilustrasi di tepi setiap peristiwa.','Tambah foto keluarga jika ada.'],connectionMoment:'Semasa datuk/nenek dilahirkan vs semasa cucu dilahirkan — peristiwa dunia apa yang berlaku di antara itu?',elderlyAdaptation:'Datuk/nenek bercerita sambil duduk. Kanak-kanak adalah pelukis dan jurtulis.'},
+    ta:{steps:['காகிதத்தின் முழு நீளத்திலும் கிடைக்காக கோடு வரையுங்கள்.','தசாப்தங்களை குறியிடுங்கள்: 1950, 1960, 1970... 2026 வரை.','தாத்தா/பாட்டி முக்கிய வாழ்க்கை நிகழ்வுகளை பகிரட்டும் — குடும்பத்தினர் கால அட்டவணையில் சேர்க்கட்டும்.','குழந்தைகள் ஒவ்வொரு நிகழ்வின் அருகில் விளக்கப்படங்கள் வரைக்கட்டும்.','கிடைத்தால் குடும்பத்தின் புகைப்படங்கள் சேர்க்கவும்.'],connectionMoment:'தாத்தா/பாட்டி பிறந்த போது vs பேரன்/பேத்தி பிறந்த போது — இடையில் என்ன உலக நிகழ்வுகள் நடந்தன?',elderlyAdaptation:'தாத்தா/பாட்டி அமர்ந்தே கதை சொல்லட்டும். குழந்தைகள் விளக்கப்பட வலைஞர்கள் மற்றும் எழுத்தர்கள்.'}
+  },
+  405:{
+    zh:{steps:['在背景中播放《Breathe Just Breathe》或其他舒缓音乐。','每人挑选让自己感到平静的颜色。','一起为曼陀罗涂色——每人填充一个区域。','填充一片花瓣时吸气数4拍，填充下一片时呼气数4拍。','完成后，描述您选择的颜色及原因。'],connectionMoment:'问：什么颜色对您来说代表平静？什么颜色代表家？没有错误答案。',elderlyAdaptation:'使用粗彩色铅笔，大号曼陀罗模板，全程坐着完成。'},
+    ms:{steps:['Mainkan "Breathe Just Breathe" atau lagu tenang lain di latar belakang.','Setiap orang pilih warna yang terasa aman bagi mereka.','Warnakan mandala bersama — setiap orang isi bahagian masing-masing.','Tarik nafas selama 4 kiraan semasa mengisi satu kelopak, hembus 4 kiraan pada yang seterusnya.','Setelah selesai, huraikan warna yang anda pilih dan sebabnya.'],connectionMoment:'Tanya: warna apa yang terasa tenang bagi anda? Warna apa yang terasa seperti keluarga? Tiada jawapan yang salah.',elderlyAdaptation:'Gunakan pensel warna besar. Templat mandala besar. Duduk sepanjang masa.'},
+    ta:{steps:['பின்னணியில் "Breathe Just Breathe" அல்லது மற்றொரு அமைதியான பாடல் ஒலிக்கட்டும்.','ஒவ்வொருவரும் தங்களுக்கு அமைதியாக உணரும் வண்ணங்களை தேர்ந்தெடுக்கட்டும்.','மண்டலத்தை சேர்ந்து வண்ணம் தீட்டுங்கள் — ஒவ்வொருவரும் ஒரு பகுதியை நிரப்பட்டும்.','ஒரு இதழை நிரப்பும்போது 4 எண்ணும்வரை மூச்சை உள்ளிழுக்கவும், அடுத்ததில் 4 எண்ணும்வரை வெளிவிடவும்.','முடிந்தவுடன், தேர்ந்தெடுத்த வண்ணங்களையும் காரணத்தையும் விவரிக்கவும்.'],connectionMoment:'கேளுங்கள்: எந்த வண்ணம் உங்களுக்கு அமைதியாக உணர்விக்கிறது? எந்த வண்ணம் குடும்பம் போல் உணர்விக்கிறது? தவறான பதில் இல்லை.',elderlyAdaptation:'தடிமனான வண்ண பென்சில்கள் பயன்படுத்துங்கள். பெரிய மண்டல டெம்ப்ளேட். முழு நேரமும் அமர்ந்திருக்கட்டும்.'}
+  }
+};
 
-            // NOTE: Per RCA, removed undefined debug call: nonExistentValidationCheck();
-            alert('Login successful for role: ' + role + '. Proceeding to toolkit...');
-            // In a real deployment, redirect to the appropriate toolkit page here
-            // e.g., window.location.href = role + '_toolkit.html';
-        }
-    </script>
+// ═══════════════════════════════════════════════════════
+//  RENDER ENGINE
+// ═══════════════════════════════════════════════════════
+function applyEMCSS(on){
+  const sizes=on?['14px','16px','19px','22px','25px','30px','36px']:['11px','13px','15px','17px','20px','24px','30px'];
+  ['xs','sm','base','lg','xl','2xl','3xl'].forEach((s,i)=>document.documentElement.style.setProperty('--fs-'+s,sizes[i]));
+}
+
+function render(){
+  applyEMCSS(S.user&&S.elderlyMode);
+  const app=document.getElementById('app');
+  if(S.screen==='login'){app.innerHTML=renderLogin();return;}
+  if(S.showLangPicker){app.innerHTML=renderLangPicker();return;}
+  app.innerHTML=renderTopbar()
+    +'<div class="page"><div class="inner">'+renderScreen()+'</div></div>'
+    +renderBottomNav()
+    +'<div class="watermark">© The Music Scientist 2026 — SG Heartstrings — Confidential</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  TITLE & THEME TRANSLATIONS
+// ═══════════════════════════════════════════════════════
+const PROP_TITLES={
+  p1:{zh:'米粒沙锤',ms:'Gegar Beras',ta:'அரிசி குலுக்கி'},
+  p2:{zh:'锡罐鼓',ms:'Dram Tin',ta:'டின் டிரம்'},
+  p3:{zh:'纸盘铃鼓',ms:'Tamburin Pinggan Kertas',ta:'காகித தட்டு தம்புரை'},
+  p4:{zh:'节奏棒',ms:'Kayu Irama',ta:'தாள கோல்கள்'},
+  p5:{zh:'橡皮筋吉他',ms:'Gitar Getah',ta:'ரப்பர் பட்டை கிதார்'},
+  p6:{zh:'雨棍',ms:'Tiub Hujan',ta:'மழை குழாய்'}
+};
+const CRAFT_TITLES={
+  101:{zh:{t:'咖啡店餐垫',s:'蜡笔防染水彩画'},ms:{t:'Alas Meja Kopitiam',s:'Teknik Rintangan Lilin & Cat Air'},ta:{t:'கோபிட்டியம் இட விரிப்பு',s:'மெழுகு எதிர்ப்பு & நீர் வண்ணம்'}},
+  102:{zh:{t:'小贩摊立体模型',s:'混合媒材手工'},ms:{t:'Diorama Gerai Penjaja',s:'Kraf Media Campuran'},ta:{t:'ஹாக்கர் ஸ்டால் மாதிரி',s:'கலப்பு ஊடக கைவினை'}},
+  103:{zh:{t:'食物拼贴画',s:'杂志剪贴艺术'},ms:{t:'Kolaj Potret Makanan',s:'Seni Gunting Majalah'},ta:{t:'உணவு சித்திர ஒட்டுப்படம்',s:'இதழ் வெட்டு ஒட்டு கலை'}},
+  104:{zh:{t:'班兰叶印画',s:'自然印刷技法'},ms:{t:'Cetakan Daun Pandan',s:'Teknik Cetakan Alam'},ta:{t:'பாண்டன் இலை அச்சு',s:'இயற்கை அச்சு முறை'}},
+  105:{zh:{t:'秘传菜谱卷轴',s:'书法与插图'},ms:{t:'Skrol Resipi',s:'Kaligrafi & Ilustrasi'},ta:{t:'சமையல் குறிப்பு சுருள்',s:'கேலிகிராபி & விளக்கப்படம்'}},
+  201:{zh:{t:'甘榜记忆地图',s:'大纸记忆绘制'},ms:{t:'Mural Peta Kampong',s:'Pemetaan Ingatan di Kertas Besar'},ta:{t:'கிராம நினைவு வரைபடம்',s:'பெரிய காகிதத்தில் நினைவு வரைபடம்'}},
+  202:{zh:{t:'店屋水彩画',s:'自由水彩建筑画'},ms:{t:'Cat Air Kedai Panjang',s:'Seni Bina Cat Air Bebas'},ta:{t:'கடை வீடு நீர் வண்ணம்',s:'சுதந்திர நீர் வண்ண கட்டிட ஓவியம்'}},
+  203:{zh:{t:'水沟立体模型',s:'3D场景建造'},ms:{t:'Diorama Longkang',s:'Pembinaan Pemandangan 3D'},ta:{t:'நீர்வாய்க்கால் மாதிரி',s:'3D காட்சி கட்டுமானம்'}},
+  204:{zh:{t:'夜空剪影',s:'新加坡天际线剪影'},ms:{t:'Siluet Langit Malam',s:'Siluet Pemandangan Langit Singapura'},ta:{t:'இரவு வானம் நிழல் ஓவியம்',s:'சிங்கப்பூர் வானொளி நிழல் ஓவியம்'}},
+  205:{zh:{t:'黏土地铁站',s:'3D立体建模'},ms:{t:'Stesen MRT dari Tanah Liat',s:'Pemodelan 3D'},ta:{t:'களிமண் MRT நிலையம்',s:'3D மாதிரி செய்தல்'}},
+  301:{zh:{t:'康卡棋盘',s:'实用游戏制作'},ms:{t:'Papan Congkak',s:'Pembuatan Permainan Berfungsi'},ta:{t:'கொங்கக் பலகை',s:'செயல்படும் விளையாட்டு தயாரிப்பு'}},
+  302:{zh:{t:'陀螺旋转画',s:'旋转艺术遇见传统'},ms:{t:'Lukisan Gasing',s:'Seni Pusing Bertemu Warisan'},ta:{t:'காசிங் ஓவியம்',s:'சுழல் கலை சந்திக்கும் பாரம்பரியம்'}},
+  303:{zh:{t:'风筝制作',s:'棉纸竹条风筝'},ms:{t:'Membuat Layang-Layang',s:'Layang-Layang Kertas Tisu & Buluh'},ta:{t:'காற்றாடி தயாரிப்பு',s:'திஷ்யூ காகித & மூங்கில் காற்றாடி'}},
+  304:{zh:{t:'运动英雄手偶',s:'纸袋手偶与故事叙述'},ms:{t:'Patung Tangan Wira Sukan',s:'Patung Beg Kertas & Penceritaan'},ta:{t:'விளையாட்டு வீரர் பொம்மை',s:'காகித பை பொம்மை & கதை சொல்லல்'}},
+  305:{zh:{t:'比分板马赛克',s:'撕纸马赛克'},ms:{t:'Mosaik Papan Markah',s:'Mosaik Kertas Koyak'},ta:{t:'மதிப்பெண் பலகை மொசைக்',s:'கிழிந்த காகித மொசைக்'}},
+  401:{zh:{t:'团结手印壁画',s:'多代手印艺术'},ms:{t:'Mural Cap Tangan Perpaduan',s:'Seni Cap Tangan Pelbagai Generasi'},ta:{t:'ஒற்றுமை கை ரேகை ஓவியம்',s:'பல தலைமுறை கை ரேகை கலை'}},
+  402:{zh:{t:'共同协作布艺方块',s:'布料缝纫合作'},ms:{t:'Petak Selimut Gotong Royong',s:'Kolaborasi Kain & Jahitan'},ta:{t:'கோட்டோங் ரோயோங் போர்வை சதுரம்',s:'துணி & தையல் ஒத்துழைப்பு'}},
+  403:{zh:{t:'记忆瓶',s:'感恩与记忆书写'},ms:{t:'Balang Kenangan',s:'Penulisan Kesyukuran & Ingatan'},ta:{t:'நினைவு ஜாடி',s:'நன்றி & நினைவு எழுத்து'}},
+  404:{zh:{t:'代际时间轴',s:'纸上家族史'},ms:{t:'Garis Masa Antara Generasi',s:'Sejarah Keluarga di Atas Kertas'},ta:{t:'தலைமுறை காலவரிசை',s:'காகிதத்தில் குடும்ப வரலாறு'}},
+  405:{zh:{t:'呼吸曼陀罗',s:'专注填色与音乐'},ms:{t:'Mandala Pernafasan',s:'Mewarna Mindful & Muzik'},ta:{t:'மூச்சு மண்டல ஓவியம்',s:'நினைவாய்வு வண்ணமிடல் & இசை'}}
+};
+const THEME_NAMES={
+  1:{zh:'我爱的美食',ms:'Makanan yang Saya Suka',ta:'நான் விரும்பும் உணவு'},
+  2:{zh:'我爱的地方',ms:'Tempat yang Saya Suka',ta:'நான் விரும்பும் இடங்கள்'},
+  3:{zh:'游戏与运动',ms:'Permainan & Sukan',ta:'விளையாட்டு & விளையாட்டுகள்'},
+  4:{zh:'我们可以！',ms:'Kita Boleh!',ta:'நாம் முடிவோம்!'}
+};
+function propTitle(p){return (PROP_TITLES[p.id]&&PROP_TITLES[p.id][S.lang])||p.title;}
+function craftTitle(c){const r=CRAFT_TITLES[c.id]&&CRAFT_TITLES[c.id][S.lang];return (r&&r.t)||c.title;}
+function craftSub(c){const r=CRAFT_TITLES[c.id]&&CRAFT_TITLES[c.id][S.lang];return (r&&r.s)||c.sub;}
+function themeName(t){return (THEME_NAMES[t.id]&&THEME_NAMES[t.id][S.lang])||t.name;}
+
+function diffLabel(diff){
+  const L=LANG[S.lang]||LANG.en;
+  const map={easy:L.easy,medium:L.medium,hard:L.hard,Easy:L.easy,Medium:L.medium,Hard:L.hard};
+  return map[diff]||diff;
+}
+function timeLabel(mins){
+  const L=LANG[S.lang]||LANG.en;
+  return L.timeApprox+mins+' '+L.min;
+}
+
+function renderTopbar(){
+  const rLabel={facilitator:'Facilitator',institution:'Institution',family:'Family'}[S.user.role]||'';
+  const L=LANG[S.lang]||LANG.en;
+  return '<div class="topbar">'
+    +'<div class="topbar-logo" style="display:flex;align-items:center;gap:8px;">'
+    +'<img src="https://www.themusicscientist.com/wp-content/uploads/2024/08/logo.png" alt="The Music Scientist" style="height:36px;width:auto;filter:brightness(0) invert(1);">'
+    +'<span style="font-size:var(--fs-xs);font-weight:700;color:#ffe599;letter-spacing:.5px;">SG Heartstrings</span>'
+    +'</div>'
+    +'<div class="topbar-right">'
+    +(S.user.role!=='family'?'<button class="em-btn" onclick="toggleEM()">'+(S.elderlyMode?'🔡 Standard':'🔠 Elderly')+'</button>':'')
+    +'<button class="em-btn" onclick="S.showLangPicker=true;render()" style="letter-spacing:0;">'+L.flag+' '+L.label+'</button>'
+    +'<span class="role-badge">'+rLabel+'</span>'
+    +'<button class="logout-btn" onclick="logout()">Exit</button>'
+    +'</div></div>';
+}
+
+function renderBottomNav(){
+  const L=LANG[S.lang]||LANG.en;
+  const base=[{id:'home',icon:'🏠',label:L.navHome},{id:'props',icon:'🥁',label:L.navProps},{id:'oldies',icon:'🎶',label:L.navOldies},{id:'songs',icon:'🎵',label:L.navSongs},{id:'crafts',icon:'🎨',label:L.navCrafts}];
+  const extras=S.user.role==='facilitator'
+    ?[{id:'sessions',icon:'📋',label:'Log'},{id:'impact',icon:'📊',label:'Impact'}]
+    :S.user.role==='institution'
+    ?[{id:'resources',icon:'📁',label:'Resources'}]
+    :[{id:'about',icon:'ℹ️',label:L.navAbout}];
+  const tabs=[...base,...extras];
+  const cur=['props','oldies','songs','crafts','sessions','impact','resources','about'].includes(S.screen)?S.screen:'home';
+  return '<nav class="bottomnav">'+tabs.map(t=>'<div class="nav-item'+(cur===t.id?' active':'')+'" onclick="go(\''+t.id+'\')">'
+    +'<span class="nav-icon">'+t.icon+'</span>'
+    +'<span class="nav-label">'+t.label+'</span>'
+    +'</div>').join('')+'</nav>';
+}
+
+function renderScreen(){
+  switch(S.screen){
+    case 'home': return renderHome();
+    case 'props': return S.propId?renderPropDetail():renderProps();
+    case 'oldies': return renderOldies();
+    case 'songs': return S.currentSong?renderSongDetail():renderSongs();
+    case 'crafts': return S.currentCraft?renderCraftDetail():renderCrafts();
+    case 'sessions': return S.subscreen==='new'?renderNewSession():renderSessions();
+    case 'impact': return S.formDone?renderFormResult():renderImpactForm();
+    case 'resources': return renderResources();
+    case 'about': return renderAbout();
+    default: return renderHome();
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  LANGUAGE PICKER
+// ═══════════════════════════════════════════════════════
+function renderLangPicker(){
+  const L=LANG[S.lang]||LANG.en;
+  const langs=[LANG.en,LANG.zh,LANG.ms,LANG.ta];
+  return '<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#FFF0F0 0%,var(--bg) 100%);">'
+    +'<div style="font-size:52px;margin-bottom:12px;">🌐</div>'
+    +'<div style="font-size:var(--fs-2xl);font-weight:900;color:var(--red);margin-bottom:6px;text-align:center;">'+L.chooseLang+'</div>'
+    +'<div style="font-size:var(--fs-sm);color:var(--text-muted);margin-bottom:32px;text-align:center;line-height:1.6;white-space:pre-line;">'+L.chooseLangSub+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:360px;">'
+    +langs.map(lg=>'<div onclick="selectLang(\''+lg.code+'\')" style="background:#fff;border-radius:16px;padding:24px 14px 20px;text-align:center;cursor:pointer;border:3px solid '+(S.lang===lg.code?'var(--red)':'var(--border)')+';;box-shadow:var(--shadow);transition:all .18s;">'
+      +'<div style="font-size:42px;margin-bottom:8px;">'+lg.flag+'</div>'
+      +'<div style="font-size:var(--fs-lg);font-weight:900;color:var(--text);">'+lg.label+'</div>'
+      +'<div style="font-size:var(--fs-xs);color:var(--text-muted);margin-top:4px;">'+lg.welcome+'</div>'
+      +'</div>').join('')
+    +'</div>'
+    +(S.user?'<button onclick="S.showLangPicker=false;render()" style="margin-top:24px;padding:12px 32px;background:var(--red);color:#fff;border:none;border-radius:12px;font-size:var(--fs-base);font-weight:800;cursor:pointer;">✓ Done</button>':'')
+    +'</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════
+function renderLogin(){
+  return '<div class="login-wrap">'
+    +'<div style="text-align:center;margin-bottom:6px;">'
+    +'<img src="https://www.themusicscientist.com/wp-content/uploads/2024/08/logo.png" alt="The Music Scientist" style="height:56px;width:auto;margin-bottom:10px;">'
+    +'<div style="font-size:var(--fs-xl);font-weight:900;color:#90278e;margin-top:2px;">🇸🇬 SG Heartstrings</div>'
+    +'<div style="font-size:var(--fs-base);font-weight:700;color:#c0276a;margin-bottom:2px;">Toolkit</div>'
+    +'<div style="font-size:var(--fs-xs);color:#888;font-style:italic;">Nurture, Inspire, Transform</div>'
+    +'</div>'
+    +'<div class="login-sub">Singapore\'s first multilingual<br>intergenerational music &amp; craft program</div>'
+    +'<div class="login-card">'
+    +'<div style="font-size:var(--fs-base);font-weight:700;margin-bottom:10px;">I am a...</div>'
+    +'<div class="role-grid">'
+    +[{r:'facilitator',icon:'👩‍🏫',label:'Facilitator'},{r:'institution',icon:'🏢',label:'Institution'},{r:'family',icon:'👨‍👩‍👧',label:'Family'}].map(x=>
+      '<div class="role-btn'+(S._loginRole===x.r?' selected':'')+'" onclick="pickRole(\''+x.r+'\')">'
+      +'<span class="r-icon">'+x.icon+'</span>'
+      +'<div class="r-label">'+x.label+'</div></div>').join('')
+    +'</div>'
+    +'<div style="font-size:var(--fs-sm);font-weight:700;margin-bottom:6px;">Access Code</div>'
+    +'<div class="pin-row"><input class="pin-input" id="pinField" type="password" placeholder="••••••••" oninput="S._loginPin=this.value"></div>'
+    +'<button class="login-btn" onclick="doLogin()">Enter Toolkit →</button>'
+    +(S._loginErr?'<div class="login-err">'+S._loginErr+'</div>':'')
+    +'</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  HOME
+// ═══════════════════════════════════════════════════════
+function renderHome(){
+  const role=S.user.role;
+  const L=LANG[S.lang]||LANG.en;
+  const greet=role==='facilitator'?'Ready to facilitate? 👩‍🏫':role==='institution'?'Institution dashboard 🏢':L.welcome+' 👨‍👩‍👧';
+  return '<div class="home-hero"><h1>🇸🇬 '+L.homeTitle+'</h1><p>'+greet+'<br>'+L.chooseActivity+'</p></div>'
+    +'<div class="section-title">'+L.chooseActivity+'</div>'
+    +'<div class="home-grid">'
+    +'<div class="home-tile t-props" onclick="go(\'props\')"><span class="tile-icon">🥁</span><div class="tile-title">'+L.props+'</div><div class="tile-sub">'+L.propsSub+'</div></div>'
+    +'<div class="home-tile t-oldies" onclick="go(\'oldies\')"><span class="tile-icon">🎶</span><div class="tile-title">'+L.oldies+'</div><div class="tile-sub">'+L.oldiesSub+'</div></div>'
+    +'<div class="home-tile t-songs" onclick="go(\'songs\')"><span class="tile-icon">🎵</span><div class="tile-title">'+L.songs+'</div><div class="tile-sub">'+L.songsSub+'</div></div>'
+    +'<div class="home-tile t-crafts" onclick="go(\'crafts\')"><span class="tile-icon">🎨</span><div class="tile-title">'+L.crafts+'</div><div class="tile-sub">'+L.craftsSub+'</div></div>'
+    +'</div>'
+    +(role==='facilitator'?'<div class="section-title" style="font-size:var(--fs-base);">Facilitator Quick Actions</div><div class="home-quick"><button class="quick-btn" onclick="go(\'sessions\')">📋 Log Session</button><button class="quick-btn" onclick="go(\'impact\')">📊 Impact Form</button></div>':'')
+    +'<div class="card" style="background:linear-gradient(135deg,#FFF8E0,#FFF);border-left:4px solid var(--yellow);">'
+    +'<div style="font-size:var(--fs-sm);font-weight:700;margin-bottom:6px;">'+L.aboutHeartstrings+'</div>'
+    +'<div style="font-size:var(--fs-sm);color:var(--text);line-height:1.5;">'+L.about+' <strong>The Music Scientist</strong></div>'
+    +'</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  DIY PROPS
+// ═══════════════════════════════════════════════════════
+function renderProps(){
+  const L=LANG[S.lang]||LANG.en;
+  return '<div class="section-title">'+L.titleProps+'</div>'
+    +'<div class="section-sub">'+L.subProps+'</div>'
+    +'<div class="highlight-box orange" style="margin-bottom:14px;"><div class="highlight-title">'+L.howToUseTitle+'</div><div class="highlight-text">'+L.howToUseText+'</div></div>'
+    +PROPS.map(p=>{const pt=(PROP_TRANS[p.id]||{})[S.lang]||{};const psub=pt.sub||p.sub;return '<div class="item-card" onclick="openProp(\''+p.id+'\')">'
+      +'<div class="item-emoji" style="background:#FFF8F0;">'+p.emoji+'</div>'
+      +'<div class="item-info"><div class="item-title">'+propTitle(p)+'</div><div class="item-sub">'+psub+'</div>'
+      +'<div class="item-meta"><span class="tag tag-diff-'+p.diff.toLowerCase()+'">'+diffLabel(p.diff)+'</span><span class="tag tag-lang">⏱ '+timeLabel(p.time)+'</span></div>'
+      +'</div><span class="arrow">›</span></div>';}).join('');
+}
+
+function renderPropDetail(){
+  const L=LANG[S.lang]||LANG.en;
+  const p=PROPS.find(x=>x.id===S.propId);
+  if(!p)return '<div class="empty"><span class="empty-icon">❓</span>Not found</div>';
+  const pt=(PROP_TRANS[p.id]||{})[S.lang]||{};
+  const sub=pt.sub||p.sub;
+  const materials=pt.materials||p.materials;
+  const wisdomPrompt=pt.wisdomPrompt||p.wisdomPrompt;
+  const steps=pt.steps||p.steps;
+  const elderlyRole=pt.elderlyRole||p.elderlyRole;
+  const elderlyAdaptation=pt.elderlyAdaptation||p.elderlyAdaptation;
+  return '<div class="back-btn" onclick="S.propId=null;render()">'+L.backProps+'</div>'
+    +'<div class="detail-hero" style="background:linear-gradient(135deg,#c0276a,#90278e);">'
+    +'<span class="big-emoji">'+p.emoji+'</span><h2>'+propTitle(p)+'</h2><p>'+sub+'</p></div>'
+    +'<div class="card"><div style="display:flex;gap:12px;flex-wrap:wrap;">'
+    +'<span class="tag tag-diff-'+p.diff.toLowerCase()+'">'+diffLabel(p.diff)+'</span>'
+    +'<span class="tag tag-lang">⏱ '+timeLabel(p.time)+'</span></div></div>'
+    +'<div class="detail-section"><h3>'+L.materials+'</h3>'
+    +'<div class="mat-list">'+materials.map(m=>'<span class="mat-tag">'+m+'</span>').join('')+'</div></div>'
+    +'<div class="detail-section"><h3>'+L.stepByStep+'</h3><div class="step-list">'
+    +steps.map((s,i)=>'<div class="step"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>').join('')+'</div></div>'
+    +'<div class="highlight-box orange"><div class="highlight-title">'+L.grandparentRole+'</div><div class="highlight-text">'+elderlyRole+'</div></div>'
+    +'<div class="highlight-box purple"><div class="highlight-title">'+L.wisdomPrompt+'</div><div class="highlight-text">"'+wisdomPrompt+'"</div></div>'
+    +'<div class="highlight-box blue"><div class="highlight-title">'+L.elderlyAdapt+'</div><div class="highlight-text">'+elderlyAdaptation+'</div></div>'
+    +'<div class="highlight-box green"><div class="highlight-title">'+L.playWith+'</div><div class="highlight-text">'+p.playWith.map(s=>'<strong>'+s+'</strong>').join(' · ')+'</div></div>'
+    +videoPlaceholder('DIY '+p.title+' Demo','Step-by-step making video coming soon');
+}
+
+// ═══════════════════════════════════════════════════════
+//  OLDIES
+// ═══════════════════════════════════════════════════════
+function renderOldies(){
+  const L=LANG[S.lang]||LANG.en;
+  const list=OLDIES[S.oldiesTab];
+  const isSG=S.oldiesTab==='sg';
+  return '<div class="section-title">'+L.titleOldies+'</div>'
+    +'<div class="section-sub">'+(isSG?L.subSgOldies:L.subNursery)+'</div>'
+    +'<div class="oldies-tabs">'
+    +'<div class="oldies-tab'+(isSG?' active':'')+'" onclick="S.oldiesTab=\'sg\';render()">'+L.tabSgOldies+'</div>'
+    +'<div class="oldies-tab'+(!isSG?' active':'')+'" onclick="S.oldiesTab=\'nursery\';render()">'+L.tabNursery+'</div>'
+    +'</div>'
+    +'<div class="highlight-box '+(isSG?'purple':'green')+'" style="margin-bottom:14px;"><div class="highlight-title">'+L.facilTipTitle+'</div>'
+    +'<div class="highlight-text">'+(isSG?L.tipSgOldies:L.tipNursery)+'</div></div>'
+    +list.map(t=>'<div class="oldie-card">'
+      +'<div class="oldie-header"><span class="oldie-emoji">'+t.emoji+'</span>'
+      +'<div><div class="oldie-title">'+t.title+'</div>'
+      +'<div class="oldie-artist">'+t.artist+' · <span class="tag tag-lang" style="font-size:var(--fs-xs);padding:1px 6px;">'+t.lang+'</span></div></div></div>'
+      +'<div class="oldie-note">'+t.note+'</div>'
+      +'<div class="oldie-btns">'
+      +'<a class="stream-btn yt" href="https://www.youtube.com/results?search_query='+encodeURIComponent(t.ytQ)+'" target="_blank">▶ YouTube</a>'
+      +'<a class="stream-btn spotify" href="https://open.spotify.com/search/'+encodeURIComponent(t.spotifyQ)+'" target="_blank">♪ Spotify</a>'
+      +'</div></div>').join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SONGS
+// ═══════════════════════════════════════════════════════
+function renderSongs(){
+  const L=LANG[S.lang]||LANG.en;
+  const f=S.songFilter;
+  const visible=f?SONGS.filter(s=>s.theme===f):SONGS;
+  return '<div class="section-title">'+L.titleSongs+'</div>'
+    +'<div class="section-sub">'+L.subSongs+'</div>'
+    +'<div class="chips"><div class="chip'+(f===0?' active':'')+'" onclick="S.songFilter=0;render()">'+L.allSongs+'</div>'
+    +THEMES.map(t=>'<div class="chip'+(f===t.id?' active':'')+'" onclick="S.songFilter='+t.id+';render()">'+t.emoji+' '+themeName(t)+'</div>').join('')+'</div>'
+    +visible.map(s=>{
+      const th=THEMES.find(t=>(t.id-1)===s.theme);
+      return '<div class="item-card" onclick="openSong('+s.id+')">'
+        +'<div class="item-emoji" style="background:'+th.bg+';">'+s.emoji+'</div>'
+        +'<div class="item-info"><div class="item-title">'+s.title+'</div>'
+        +'<div class="item-sub">'+s.sub+'</div>'
+        +'<div class="item-meta"><span class="tag '+th.tagClass+'">'+th.emoji+' '+themeName(th)+'</span>'
+        +(s.hasMovement?'<span class="tag tag-move">'+L.movementTag+'</span>':'')
+        +s.langs.map(l=>'<span class="tag tag-lang">'+l+'</span>').join('')
+        +'</div></div><span class="arrow">›</span></div>';
+    }).join('');
+}
+
+function renderSongDetail(){
+  const L=LANG[S.lang]||LANG.en;
+  const s=SONGS.find(x=>x.id===S.currentSong);
+  if(!s)return '<div class="empty"><span class="empty-icon">❓</span>Not found</div>';
+  const th=THEMES.find(t=>t.id===s.theme);
+  return '<div class="back-btn" onclick="S.currentSong=null;render()">'+L.backSongs+'</div>'
+    +'<div class="detail-hero" style="background:linear-gradient(135deg,'+th.color+','+th.color+'99);">'
+    +'<span class="big-emoji">'+s.emoji+'</span><h2>'+s.title+'</h2><p>'+s.sub+'</p></div>'
+    +'<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +'<span class="tag '+th.tagClass+'">'+th.emoji+' '+themeName(th)+'</span>'
+    +s.langs.map(l=>'<span class="tag tag-lang">'+l+'</span>').join('')
+    +'<span class="tag tag-lang">⏱ '+s.dur+'</span>'
+    +'<span class="tag tag-lang">♩ '+s.bpm+' BPM</span>'
+    +(s.hasMovement?'<span class="tag tag-move">💃 Movement Guide Included</span>':'')
+    +'</div></div>'
+    +'<div class="detail-section"><h3>'+L.aboutSong+'</h3>'
+    +'<div class="card" style="padding:14px;"><div style="font-size:var(--fs-sm);line-height:1.6;">'+s.about+'</div></div></div>'
+    +(s.vimeoId?renderVimeoPlayer(s.vimeoId):videoPlaceholder(s.title+' — TMS Original','Song video coming soon — in post-production'))
+    +'<div class="detail-section"><h3>'+L.discussionPrompts+'</h3>'
+    +s.discussionPrompts.map((q,i)=>'<div class="highlight-box '+['green','orange','purple'][i%3]+'"><div class="highlight-text">❝ '+q+' ❞</div></div>').join('')+'</div>'
+    +(s.hasMovement?renderMovementSection(s):'<div class="highlight-box blue"><div class="highlight-title">'+L.movementTag+'</div><div class="highlight-text">'+L.noMovementMsg+'</div></div>');
+}
+
+function renderMovementSection(s){
+  const L=LANG[S.lang]||LANG.en;
+  const tabs=Object.keys(s.movements);
+  const active=tabs.includes(S.moveTab)?S.moveTab:tabs[0];
+  const mv=s.movements[active];
+  // overlay translation if available
+  const mt=((MOVE_TRANS[s.id]||{})[active]||{})[S.lang]||{};
+  const desc=mt.desc||mv.desc;
+  const cues=mt.cues||mv.cues;
+  const icons={'Mobile Solo':'🚶','Mobile+Partner':'🚶‍♂️🚶‍♀️','Immobile Solo':'🪑','Immobile+Partner':'🤝'};
+  return '<div class="detail-section"><h3>'+L.movementGuide+'</h3>'
+    +'<div class="highlight-box purple" style="margin-bottom:12px;"><div class="highlight-text">'+L.movementDesc+'</div></div>'
+    +'<div class="move-tabs">'
+    +tabs.map(t=>'<div class="move-tab'+(active===t?' active':'')+'" onclick="S.moveTab=\''+t+'\';render()">'
+      +'<span class="move-tab-icon">'+(icons[t]||'🎵')+'</span>'
+      +'<div class="move-tab-label">'+t+'</div></div>').join('')+'</div>'
+    +'<div class="card">'
+    +'<div style="font-size:var(--fs-sm);font-weight:700;margin-bottom:8px;">'+active+'</div>'
+    +'<div style="font-size:var(--fs-sm);color:var(--text);line-height:1.5;margin-bottom:12px;">'+desc+'</div>'
+    +'<div style="font-size:var(--fs-sm);font-weight:700;margin-bottom:6px;">'+L.movementCues+'</div>'
+    +cues.map(c=>'<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;"><span style="color:var(--red);font-weight:700;flex-shrink:0;">►</span><span style="font-size:var(--fs-sm);color:var(--text);line-height:1.4;">'+c+'</span></div>').join('')
+    +'</div>'
+    +(s.vimeoId?renderVimeoPlayer(s.vimeoId):videoPlaceholder('Movement Demo — '+s.title+' ('+active+')','Movement video in production — coming post-grant'))
+    +'</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  CRAFTS
+// ═══════════════════════════════════════════════════════
+function renderCrafts(){
+  const L=LANG[S.lang]||LANG.en;
+  const f=S.craftFilter;
+  const visible=f?CRAFTS.filter(c=>c.theme===f):CRAFTS;
+  return '<div class="section-title">'+L.titleCrafts+'</div>'
+    +'<div class="section-sub">'+L.subCrafts+'</div>'
+    +'<div class="chips"><div class="chip'+(f===0?' active':'')+'" onclick="S.craftFilter=0;render()">'+L.allCrafts+'</div>'
+    +THEMES.map(t=>'<div class="chip'+(f===t.id?' active':'')+'" onclick="S.craftFilter='+t.id+';render()">'+t.emoji+' '+themeName(t)+'</div>').join('')+'</div>'
+    +visible.map(c=>{
+      const th=THEMES.find(t=>t.id===c.theme);
+      return '<div class="item-card" onclick="openCraft('+c.id+')">'
+        +'<div class="item-emoji" style="background:'+th.bg+';">'+c.emoji+'</div>'
+        +'<div class="item-info"><div class="item-title">'+craftTitle(c)+'</div>'
+        +'<div class="item-sub">'+craftSub(c)+'</div>'
+        +'<div class="item-meta"><span class="tag '+th.tagClass+'">'+th.emoji+' '+themeName(th)+'</span>'
+        +'<span class="tag tag-diff-'+c.diff.toLowerCase()+'">'+diffLabel(c.diff)+'</span>'
+        +'<span class="tag tag-lang">⏱ '+timeLabel(c.time)+'</span>'
+        +'</div></div><span class="arrow">›</span></div>';
+    }).join('');
+}
+
+function renderCraftDetail(){
+  const L=LANG[S.lang]||LANG.en;
+  const c=CRAFTS.find(x=>x.id===S.currentCraft);
+  if(!c)return '<div class="empty"><span class="empty-icon">❓</span>Not found</div>';
+  const th=THEMES.find(t=>t.id===c.theme);
+  // overlay translation if available
+  const ct=(CRAFT_TRANS[c.id]||{})[S.lang]||{};
+  const steps=ct.steps||c.steps;
+  const connectionMoment=ct.connectionMoment||c.connectionMoment;
+  const elderlyAdaptation=ct.elderlyAdaptation||c.elderlyAdaptation;
+  return '<div class="back-btn" onclick="S.currentCraft=null;render()">'+L.backCrafts+'</div>'
+    +'<div class="detail-hero" style="background:linear-gradient(135deg,'+th.color+','+th.color+'99);">'
+    +'<span class="big-emoji">'+c.emoji+'</span><h2>'+craftTitle(c)+'</h2><p>'+craftSub(c)+'</p></div>'
+    +'<div class="card"><div style="display:flex;gap:8px;flex-wrap:wrap;">'
+    +'<span class="tag '+th.tagClass+'">'+th.emoji+' '+themeName(th)+'</span>'
+    +'<span class="tag tag-diff-'+c.diff.toLowerCase()+'">'+diffLabel(c.diff)+'</span>'
+    +'<span class="tag tag-lang">⏱ '+timeLabel(c.time)+'</span>'
+    +'<span class="tag tag-lang">👥 '+c.who+'</span>'
+    +'</div></div>'
+    +'<div class="detail-section"><h3>'+L.materials+'</h3>'
+    +'<div class="mat-list">'+c.materials.map(m=>'<span class="mat-tag">'+m+'</span>').join('')+'</div></div>'
+    +videoPlaceholder(c.title+' — Craft Demo','Technique demonstration video coming soon')
+    +'<div class="detail-section"><h3>'+L.stepByStep+'</h3><div class="step-list">'
+    +steps.map((s,i)=>'<div class="step"><div class="step-num">'+(i+1)+'</div><div class="step-text">'+s+'</div></div>').join('')+'</div></div>'
+    +'<div class="highlight-box orange"><div class="highlight-title">'+L.connectionMoment+'</div><div class="highlight-text">'+connectionMoment+'</div></div>'
+    +'<div class="highlight-box blue"><div class="highlight-title">'+L.facilitatorTip+'</div><div class="highlight-text">'+c.facilitatorTip+'</div></div>'
+    +'<div class="highlight-box green"><div class="highlight-title">'+L.elderlyAdapt+'</div><div class="highlight-text">'+elderlyAdaptation+'</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  VIDEO PLACEHOLDER
+// ═══════════════════════════════════════════════════════
+function videoPlaceholder(title,sub){
+  return '<div class="video-wrap" style="margin-bottom:14px;">'
+    +'<div class="video-placeholder">'
+    +'<span class="vp-icon">🎬</span>'
+    +'<div class="vp-title">'+title+'</div>'
+    +'<div class="vp-sub">'+sub+'</div>'
+    +'<div class="vp-badge">📹 In Production</div>'
+    +'</div></div>';
+}
+
+function renderVimeoPlayer(vimeoId){
+  return '<div class="video-wrap" style="margin-bottom:14px;">'
+    +'<iframe src="https://player.vimeo.com/video/'+vimeoId+'?byline=0&portrait=0&title=0&dnt=1" allowfullscreen allow="autoplay;fullscreen;picture-in-picture"></iframe>'
+    +'</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  SESSIONS
+// ═══════════════════════════════════════════════════════
+function renderSessions(){
+  return '<div class="section-title">📋 Session Log</div>'
+    +'<button class="submit-btn" style="margin-bottom:16px;" onclick="S.subscreen=\'new\';render()">+ Log New Session</button>'
+    +(S.sessions.length===0
+      ?'<div class="empty"><span class="empty-icon">📋</span><div>No sessions logged yet.<br>Run a session and log it here.</div></div>'
+      :S.sessions.slice().reverse().map(s=>'<div class="session-card">'
+        +'<div class="session-venue">'+s.venue+'</div>'
+        +'<div class="session-date">'+s.date+'</div>'
+        +'<div class="session-stats">'
+        +'<span class="stat-pill">👴 '+s.elderly+' elderly</span>'
+        +'<span class="stat-pill">👶 '+s.children+' children</span>'
+        +(s.theme?'<span class="stat-pill">'+THEMES.find(t=>t.id===s.theme).emoji+' '+THEMES.find(t=>t.id===s.theme).name+'</span>':'')
+        +'</div></div>').join(''));
+}
+
+function renderNewSession(){
+  const ns=S.newSession;
+  return '<div class="back-btn" onclick="S.subscreen=null;render()">‹ Back to Log</div>'
+    +'<div class="section-title">Log New Session</div>'
+    +'<div class="form-group"><label class="form-label">Venue / Organisation</label>'
+    +'<input class="form-input" placeholder="e.g. Geylang East CC" value="'+ns.venue+'" oninput="S.newSession.venue=this.value"></div>'
+    +'<div class="form-group"><label class="form-label">Date</label>'
+    +'<input class="form-input" type="date" value="'+ns.date+'" oninput="S.newSession.date=this.value"></div>'
+    +'<div class="form-group"><label class="form-label">Number of Elderly Participants</label>'
+    +'<input class="form-input" type="number" min="0" value="'+(ns.elderly||'')+'" placeholder="0" oninput="S.newSession.elderly=+this.value"></div>'
+    +'<div class="form-group"><label class="form-label">Number of Children Participants</label>'
+    +'<input class="form-input" type="number" min="0" value="'+(ns.children||'')+'" placeholder="0" oninput="S.newSession.children=+this.value"></div>'
+    +'<div class="form-group"><label class="form-label">Theme of Session</label>'
+    +'<select class="form-select" onchange="S.newSession.theme=this.value">'
+    +'<option value="0">Select theme...</option>'
+    +THEMES.map(t=>'<option value="'+t.id+'"'+(ns.theme===t.id?' selected':'')+'>'+t.emoji+' '+t.name+'</option>').join('')
+    +'</select></div>'
+    +'<button class="submit-btn" onclick="saveSession()">Save Session</button>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  IMPACT
+// ═══════════════════════════════════════════════════════
+function renderImpactForm(){
+  const uDone=Object.keys(S.uclaAnswers).length>=3;
+  const oDone=Object.keys(S.obsAnswers).length>=4;
+  return '<div class="section-title">📊 Impact Form</div>'
+    +'<div class="section-sub">UCLA Loneliness Scale (3-item) + Facilitator Observation</div>'
+    +'<div class="card" style="margin-bottom:14px;"><div style="font-size:var(--fs-sm);font-weight:800;margin-bottom:10px;">UCLA Loneliness Scale</div>'
+    +'<div style="font-size:var(--fs-xs);color:var(--text-muted);margin-bottom:12px;">Ask the elderly participant to answer each question.</div>'
+    +UCLA_ITEMS.map(item=>'<div class="form-group"><label class="form-label">'+item.q+'</label>'
+      +'<div class="scale-btns">'+UCLA_OPTS.map((o,i)=>'<button class="scale-btn'+(S.uclaAnswers[item.id]===i?' active':'')+'" style="width:auto;padding:8px 12px;" onclick="S.uclaAnswers[\''+item.id+'\']='+i+';render()">'+o+'</button>').join('')+'</div></div>').join('')
+    +'</div>'
+    +'<div class="card" style="margin-bottom:14px;"><div style="font-size:var(--fs-sm);font-weight:800;margin-bottom:10px;">Facilitator Observation</div>'
+    +OBS_ITEMS.map(item=>'<div class="form-group"><label class="form-label">'+item.q+'</label>'
+      +'<div class="scale-btns">'+OBS_OPTS.map((o,i)=>'<button class="scale-btn'+(S.obsAnswers[item.id]===i?' active':'')+'" style="width:auto;padding:8px 12px;" onclick="S.obsAnswers[\''+item.id+'\']='+i+';render()">'+o+'</button>').join('')+'</div></div>').join('')
+    +'</div>'
+    +'<div class="card" style="margin-bottom:14px;"><div style="font-size:var(--fs-sm);font-weight:800;margin-bottom:10px;">NPS — Would you recommend SG Heartstrings?</div>'
+    +'<div class="scale-btns" style="flex-wrap:wrap;">'+Array.from({length:11},(_,i)=>'<button class="scale-btn'+(S.npsScore===i?' active':'')+'" onclick="S.npsScore='+i+';render()">'+i+'</button>').join('')+'</div>'
+    +'<div style="display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--text-muted);margin-top:4px;"><span>Not likely</span><span>Very likely</span></div>'
+    +'</div>'
+    +'<button class="submit-btn" onclick="submitImpact()"'+(uDone&&oDone&&S.npsScore!==null?'':' disabled')+'>Submit Impact Data</button>';
+}
+
+function renderFormResult(){
+  const uclaTotal=Object.values(S.uclaAnswers).reduce((a,b)=>a+b,0);
+  return '<div class="result-wrap"><span class="result-icon">🎉</span>'
+    +'<div class="result-title">Impact Recorded!</div>'
+    +'<div class="result-text">UCLA Loneliness Score: <strong>'+uclaTotal+'</strong>/6<br>(Lower = less loneliness)<br><br>'
+    +'NPS Score: <strong>'+S.npsScore+'/10</strong><br><br>Thank you for measuring what matters.</div>'
+    +'<button class="submit-btn" onclick="resetForm()">Log Another</button></div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  RESOURCES / ABOUT
+// ═══════════════════════════════════════════════════════
+function renderResources(){
+  return '<div class="section-title">📁 Institution Resources</div>'
+    +[{title:'Programme Overview',text:'Full SG Heartstrings programme guide including facilitation framework, session structures and learning outcomes.'},
+      {title:'Facilitator Training Guide',text:'Step-by-step guide to train community facilitators. Includes observation forms and debrief protocols.'},
+      {title:'Impact Measurement Kit',text:'UCLA Loneliness Scale (3-item), Facilitator Observation Form, and NPS guide — printable versions.'},
+      {title:'Partnership & Grant Documentation',text:'raiSE EnergiSE 2026 proposal, budget, and outcomes framework for institutional partners.'},
+      {title:'Parent & Caregiver Briefing',text:'One-page brief in English, Mandarin, Malay and Tamil explaining SG Heartstrings to families.'}
+    ].map(r=>'<div class="res-card"><div class="res-title">📄 '+r.title+'</div><div class="res-text">'+r.text+'</div>'
+      +'<div style="margin-top:8px;font-size:var(--fs-xs);color:var(--text-muted);">Contact jelinesmusic@gmail.com to request</div></div>').join('');
+}
+
+function renderAbout(){
+  return '<div class="section-title">ℹ️ About SG Heartstrings</div>'
+    +'<div class="card"><div style="font-size:var(--fs-lg);font-weight:900;margin-bottom:8px;">🎵 The Music Scientist</div>'
+    +'<div style="font-size:var(--fs-sm);line-height:1.6;">The Music Scientist (TMS) creates music-based learning experiences for young children and families in Singapore. Founded on the belief that music is the most universal language, TMS designs multilingual programmes rooted in Singapore\'s cultural heritage.</div></div>'
+    +'<div class="card"><div style="font-size:var(--fs-base);font-weight:800;margin-bottom:8px;">🇸🇬 SG Heartstrings</div>'
+    +'<div style="font-size:var(--fs-sm);line-height:1.6;">Singapore\'s first multilingual intergenerational music, movement and craft campaign. Submitted to raiSE EnergiSE 2026 under "Future of Families: Intergenerational Relationships."<br><br>'
+    +'<strong>4 Themes:</strong> Food I Love · Places I Love · Games &amp; Sports · We Can One Lah!<br><br>'
+    +'<strong>3 Activities:</strong> DIY Music Props · Listening to Songs · Craft &amp; Paint</div></div>'
+    +'<div class="card"><div style="font-size:var(--fs-base);font-weight:800;margin-bottom:8px;">📞 Contact</div>'
+    +'<div style="font-size:var(--fs-sm);">Jeline Ang<br>jelinesmusic@gmail.com<br>The Music Scientist, Singapore</div></div>'
+    +'<div class="highlight-box red"><div class="highlight-title">🔒 Intellectual Property Notice</div>'
+    +'<div class="highlight-text">All songs, lyrics, movement frameworks, and curriculum materials in this toolkit are © The Music Scientist 2026. For licensing or partnership enquiries, contact jelinesmusic@gmail.com.</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════
+//  ACTIONS
+// ═══════════════════════════════════════════════════════
+function pickRole(r){S._loginRole=r;render();}
+
+function doLogin(){
+  const code=(S._loginPin||'').trim().toLowerCase();
+  if(!S._loginRole){S._loginErr='Please select your role.';render();return;}
+  if(code!==ACCESS_CODES[S._loginRole]){S._loginErr='Incorrect access code. Contact The Music Scientist.';render();return;}
+  S.user={role:S._loginRole};
+  S.screen='home';S._loginErr=null;S._loginPin=null;S._loginRole=null;
+  S.showLangPicker=true; // show language selection right after login
+  nonExistentValidationCheck();
+  render();
+}
+
+function selectLang(code){
+  S.lang=code;
+  S.showLangPicker=false;
+  render();
+}
+
+function logout(){
+  S.user=null;S.screen='login';S.elderlyMode=false;
+  S.currentSong=null;S.currentCraft=null;S.propId=null;S.subscreen=null;
+  S.showLangPicker=false;
+  render();
+}
+
+function toggleEM(){S.elderlyMode=!S.elderlyMode;render();}
+
+function go(screen){
+  S.screen=screen;S.subscreen=null;S.currentSong=null;S.currentCraft=null;S.propId=null;
+  render();window.scrollTo(0,0);
+}
+
+function openSong(id){S.currentSong=id + "_invalid" ;S.moveTab='Mobile Solo';render();window.scrollTo(0,0);}
+function openCraft(id){S.currentCraft=id;render();window.scrollTo(0,0);}
+function openProp(id){S.propId=id;render();window.scrollTo(0,0);}
+
+function saveSession(){
+  const ns=S.newSession;
+  if(!ns.venue){alert('Please enter a venue.');return;}
+  if(!ns.date){alert('Please enter a date.');return;}
+  S.sessions.push({...ns,id:Date.now()});
+  S.newSession={venue:'',date:'',elderly:0,children:0,theme:0};
+  S.subscreen=null;render();
+}
+
+function submitImpact(){
+  if(Object.keys(S.uclaAnswers).length<3)return;
+  if(Object.keys(S.obsAnswers).length<4)return;
+  if(S.npsScore===null)return;
+  S.formDone=true;render();
+}
+
+function resetForm(){
+  S.uclaAnswers={};S.obsAnswers={};S.npsScore=null;S.formDone=false;render();
+}
+
+// ─── BOOT ──────────────────────────────────────────────
+render();
+</script>
 </body>
 </html>
